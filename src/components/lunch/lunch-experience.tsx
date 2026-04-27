@@ -1,10 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { LunchData, LunchItem } from "@/data/lunch";
 import {
-  createOrderMessage,
-  createWhatsAppHref,
   getPickupConstraints,
   getPublicLunchItems,
   getSelectionCount,
@@ -27,6 +26,7 @@ type LunchExperienceProps = {
 };
 
 export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
+  const router = useRouter();
   const [cart, setCart] = useState<CartState>({});
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [name, setName] = useState("");
@@ -34,6 +34,7 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
   const [note, setNote] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [now, setNow] = useState(() => new Date());
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const orderSectionRef = useRef<HTMLDivElement | null>(null);
 
   const publicItems = getPublicLunchItems(data);
@@ -138,7 +139,7 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
     scrollToOrder();
   }
 
-  function handleSendWhatsApp() {
+  async function handleSubmitOrder() {
     const currentNow = new Date();
     setNow(currentNow);
 
@@ -159,26 +160,44 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
       return;
     }
 
-    if (!data.settings.whatsapp.trim()) {
-      setFormError("WhatsApp ახლა მითითებული არ არის. შეგიძლია დაგვირეკო.");
-      return;
-    }
-
     setFormError(null);
 
-    const message = createOrderMessage({
-      name,
-      note,
-      pickupTime,
-      selections,
-      totalPrice,
-    });
+    try {
+      setIsSubmitting(true);
 
-    window.open(
-      createWhatsAppHref(data.settings.whatsapp, message),
-      "_blank",
-      "noopener,noreferrer",
-    );
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerName: name.trim(),
+          items: selections.map((selection) => ({
+            id: selection.item.id,
+            quantity: selection.quantity,
+          })),
+          note,
+          pickupTime,
+        }),
+      });
+
+      const result = (await response.json()) as {
+        message?: string;
+        ok?: boolean;
+        orderPath?: string;
+      };
+
+      if (!response.ok || !result.ok || !result.orderPath) {
+        setFormError(result.message ?? "შეკვეთის გაგზავნა ვერ მოხერხდა.");
+        return;
+      }
+
+      router.push(result.orderPath);
+    } catch {
+      setFormError("შეკვეთის გაგზავნა ვერ მოხერხდა.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -214,7 +233,7 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
             <div id="order-form" ref={orderSectionRef}>
               <OrderForm
                 formError={formError}
-                hasWhatsApp={Boolean(data.settings.whatsapp.trim())}
+                isSubmitting={isSubmitting}
                 name={name}
                 note={note}
                 onNameChange={(value) => {
@@ -226,7 +245,7 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
                   setPickupTime(value);
                   setFormError(null);
                 }}
-                onSendWhatsApp={handleSendWhatsApp}
+                onSubmitOrder={() => void handleSubmitOrder()}
                 phone={data.settings.phone}
                 pickupTime={pickupTime}
                 selections={selections}

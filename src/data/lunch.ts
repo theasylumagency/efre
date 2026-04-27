@@ -2,7 +2,12 @@ export const lunchPaths = {
   home: "/lunch",
   poster: "/poster",
   admin: "/admin",
+  control: "/control",
 } as const;
+
+export function getOrderPath(publicCode: string) {
+  return `/order/${encodeURIComponent(publicCode)}`;
+}
 
 export type PriceMode = "common" | "perItem";
 

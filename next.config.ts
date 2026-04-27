@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  outputFileTracingIncludes: {
+    "/*": ["content/**/*", "data/**/*"],
+  },
+  serverExternalPackages: ["better-sqlite3"],
 };
 
 export default nextConfig;

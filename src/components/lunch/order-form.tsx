@@ -4,13 +4,13 @@ import { createTelHref, formatPrice } from "@/lib/lunch";
 
 type OrderFormProps = {
   formError: string | null;
-  hasWhatsApp: boolean;
+  isSubmitting: boolean;
   name: string;
   note: string;
   onNameChange: (value: string) => void;
   onNoteChange: (value: string) => void;
   onPickupTimeChange: (value: string) => void;
-  onSendWhatsApp: () => void;
+  onSubmitOrder: () => void;
   phone: string;
   pickupTime: string;
   selections: LunchSelection[];
@@ -21,13 +21,13 @@ type OrderFormProps = {
 
 export function OrderForm({
   formError,
-  hasWhatsApp,
+  isSubmitting,
   name,
   note,
   onNameChange,
   onNoteChange,
   onPickupTimeChange,
-  onSendWhatsApp,
+  onSubmitOrder,
   phone,
   pickupTime,
   selections,
@@ -47,8 +47,8 @@ export function OrderForm({
             თუ გინდა, წინასწარ დაგიმზადებთ
           </h2>
           <p className="max-w-[44ch] text-sm leading-6 text-muted sm:text-base">
-            რამდენიმე დეტალი დაგვიტოვე, დანარჩენს WhatsApp-ით ან ზარით სწრაფად
-            დავასრულებთ.
+            სახელი და მოსვლის დრო დაგვიტოვე, შეკვეთა კი პირდაპირ აქვე
+            ჩაიწერება. თუ გირჩევნია, დარეკვაც შეგიძლია.
           </p>
         </div>
 
@@ -135,16 +135,14 @@ export function OrderForm({
         ) : null}
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          {hasWhatsApp ? (
-            <button
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-paper transition-colors duration-200 hover:bg-accent/92 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-55"
-              disabled={!validation.orderableToday}
-              onClick={onSendWhatsApp}
-              type="button"
-            >
-              WhatsApp-ით გაგზავნა
-            </button>
-          ) : null}
+          <button
+            className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-paper transition-colors duration-200 hover:bg-accent/92 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-55"
+            disabled={!validation.orderableToday || isSubmitting}
+            onClick={onSubmitOrder}
+            type="button"
+          >
+            {isSubmitting ? "იგზავნება..." : "წინასწარ მომიმზადეთ"}
+          </button>
           <a
             className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             href={createTelHref(phone)}
@@ -154,7 +152,8 @@ export function OrderForm({
         </div>
 
         <p className="text-sm leading-6 text-muted">
-          თუ დღეს უბრალოდ შემოვლა გირჩევნია, ეგეც სრულიად ნორმალურია.
+          გაგზავნის შემდეგ შეკვეთის სტატუსს აქვე ნახავ. თუ დღეს უბრალოდ შემოვლა
+          გირჩევნია, ეგეც სრულიად ნორმალურია.
         </p>
       </div>
     </section>

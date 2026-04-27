@@ -2,7 +2,15 @@
 
 import { type FormEvent, useState, useTransition } from "react";
 
-export function AdminLoginForm() {
+type AdminLoginFormProps = {
+  description?: string;
+  title?: string;
+};
+
+export function AdminLoginForm({
+  description = "აქედან იცვლება lunch JSON-ის ტექსტი, საათები, ფასები და აქტიური კომბოები.",
+  title = "Admin",
+}: AdminLoginFormProps) {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -39,12 +47,9 @@ export function AdminLoginForm() {
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div className="space-y-2">
           <h1 className="text-2xl font-extrabold tracking-[-0.05em] text-ink">
-            Admin
+            {title}
           </h1>
-          <p className="text-sm leading-6 text-muted">
-            აქედან იცვლება lunch JSON-ის ტექსტი, საათები, ფასები და აქტიური
-            კომბოები.
-          </p>
+          <p className="text-sm leading-6 text-muted">{description}</p>
         </div>
 
         <label className="space-y-2">

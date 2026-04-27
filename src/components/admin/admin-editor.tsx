@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
-import type { LunchData, LunchItem, LunchSettings } from "@/data/lunch";
-import { sortLunchItems } from "@/data/lunch";
+import { lunchPaths, sortLunchItems, type LunchData, type LunchItem, type LunchSettings } from "@/data/lunch";
 import { AdminLunchItemsForm } from "@/components/admin/admin-lunch-items-form";
 import { AdminSettingsForm } from "@/components/admin/admin-settings-form";
 
@@ -162,21 +162,39 @@ export function AdminEditor({
               </p>
             </div>
           </div>
-          {isProtected ? (
-            <button
-              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={isLoggingOut}
-              onClick={handleLogout}
-              type="button"
-            >
-              {isLoggingOut ? "გამოსვლა..." : "გამოსვლა"}
-            </button>
-          ) : (
-            <div className="rounded-2xl border border-accent/15 bg-accent-soft px-4 py-3 text-sm font-medium text-accent">
-              პაროლი გამორთულია. თუ დაცვა გინდა, დააყენე{" "}
-              <code>LUNCH_ADMIN_PASSWORD</code>.
+          <div className="flex flex-col gap-3 sm:items-end">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                href={lunchPaths.control}
+              >
+                Control
+              </Link>
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                href={lunchPaths.home}
+              >
+                Public page
+              </Link>
+              {isProtected ? (
+                <button
+                  className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={isLoggingOut}
+                  onClick={handleLogout}
+                  type="button"
+                >
+                  {isLoggingOut ? "გამოსვლა..." : "გამოსვლა"}
+                </button>
+              ) : null}
             </div>
-          )}
+
+            {!isProtected ? (
+              <div className="rounded-2xl border border-accent/15 bg-accent-soft px-4 py-3 text-sm font-medium text-accent">
+                პაროლი გამორთულია. თუ დაცვა გინდა, დააყენე{" "}
+                <code>LUNCH_ADMIN_PASSWORD</code>.
+              </div>
+            ) : null}
+          </div>
         </div>
       </section>
 
