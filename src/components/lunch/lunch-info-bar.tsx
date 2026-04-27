@@ -1,11 +1,14 @@
-import type { LunchContent } from "@/data/lunch";
+import type { LunchSettings } from "@/data/lunch";
 import { getCommonPriceLine } from "@/lib/lunch";
 
 type LunchInfoBarProps = {
-  content: Pick<LunchContent, "lunchHoursLabel" | "lunchHours" | "commonPrice">;
+  settings: Pick<
+    LunchSettings,
+    "commonPrice" | "lunchHours" | "lunchHoursLabel" | "priceMode"
+  >;
 };
 
-export function LunchInfoBar({ content }: LunchInfoBarProps) {
+export function LunchInfoBar({ settings }: LunchInfoBarProps) {
   return (
     <section
       aria-label="ლანჩის სწრაფი ინფორმაცია"
@@ -13,10 +16,10 @@ export function LunchInfoBar({ content }: LunchInfoBarProps) {
     >
       <div className="rounded-[26px] border border-border bg-card-strong p-4">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
-          {content.lunchHoursLabel}
+          {settings.lunchHoursLabel}
         </p>
         <p className="mt-2 text-xl font-bold tracking-[-0.04em] text-ink">
-          {content.lunchHours}
+          {settings.lunchHours}
         </p>
       </div>
       <div className="rounded-[26px] border border-border bg-card-strong p-4">
@@ -24,7 +27,7 @@ export function LunchInfoBar({ content }: LunchInfoBarProps) {
           ფასი
         </p>
         <p className="mt-2 text-xl font-bold tracking-[-0.04em] text-ink">
-          {getCommonPriceLine(content.commonPrice) ?? "ფასი თითოეულ ბარათზე"}
+          {getCommonPriceLine(settings) ?? "ფასი თითოეულ ბარათზეა"}
         </p>
       </div>
     </section>

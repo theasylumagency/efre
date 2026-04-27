@@ -1,0 +1,265 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import type { LunchData, LunchItem } from "@/data/lunch";
+import {
+  createOrderMessage,
+  createWhatsAppHref,
+  getPickupConstraints,
+  getPublicLunchItems,
+  getSelectionCount,
+  getSelections,
+  getTotalPrice,
+  validatePickupTime,
+  type CartState,
+} from "@/lib/lunch";
+import { LunchActions } from "@/components/lunch/lunch-actions";
+import { LunchFooter } from "@/components/lunch/lunch-footer";
+import { LunchHero } from "@/components/lunch/lunch-hero";
+import { LunchInfoBar } from "@/components/lunch/lunch-info-bar";
+import { LunchList } from "@/components/lunch/lunch-list";
+import { LunchSummary } from "@/components/lunch/lunch-summary";
+import { OrderForm } from "@/components/lunch/order-form";
+
+type LunchExperienceProps = {
+  data: LunchData;
+  posterPath: string;
+};
+
+export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
+  const [cart, setCart] = useState<CartState>({});
+  const [isOrderOpen, setIsOrderOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [pickupTime, setPickupTime] = useState("");
+  const [note, setNote] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
+  const [now, setNow] = useState(() => new Date());
+  const orderSectionRef = useRef<HTMLDivElement | null>(null);
+
+  const publicItems = getPublicLunchItems(data);
+  const selections = getSelections(publicItems, cart, data.settings);
+  const totalCount = getSelectionCount(cart);
+  const totalPrice = getTotalPrice(selections);
+  const pickupConstraints = getPickupConstraints(data.settings, selections, now);
+  const pickupValidation = validatePickupTime({
+    now,
+    pickupTime,
+    selections,
+    settings: data.settings,
+  });
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setNow(new Date());
+    }, 60000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  function scrollToCards() {
+    document
+      .getElementById("lunch-list")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function scrollToOrder() {
+    window.setTimeout(() => {
+      orderSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 0);
+  }
+
+  function updateItemQuantity(item: LunchItem, nextQuantity: number) {
+    const maxQuantity = item.quantityAvailable ?? Number.POSITIVE_INFINITY;
+    const normalizedQuantity = Math.max(
+      0,
+      Math.min(nextQuantity, maxQuantity, Number.MAX_SAFE_INTEGER),
+    );
+
+    setCart((previousCart) => {
+      if (normalizedQuantity === 0) {
+        const rest = { ...previousCart };
+        delete rest[item.id];
+
+        if (Object.keys(rest).length === 0) {
+          setIsOrderOpen(false);
+          setFormError(null);
+        }
+
+        return rest;
+      }
+
+      return {
+        ...previousCart,
+        [item.id]: normalizedQuantity,
+      };
+    });
+  }
+
+  function handleDecrease(itemId: string) {
+    const item = publicItems.find((entry) => entry.id === itemId);
+
+    if (!item) {
+      return;
+    }
+
+    updateItemQuantity(item, (cart[itemId] ?? 0) - 1);
+  }
+
+  function handleIncrease(itemId: string) {
+    const item = publicItems.find((entry) => entry.id === itemId);
+
+    if (!item) {
+      return;
+    }
+
+    updateItemQuantity(item, (cart[itemId] ?? 0) + 1);
+  }
+
+  function handlePrepare() {
+    if (!data.settings.orderingEnabled) {
+      return;
+    }
+
+    if (!totalCount) {
+      scrollToCards();
+      return;
+    }
+
+    setFormError(null);
+    setIsOrderOpen(true);
+
+    if (!pickupTime) {
+      setPickupTime(pickupConstraints.earliestTime);
+    }
+
+    scrollToOrder();
+  }
+
+  function handleSendWhatsApp() {
+    const currentNow = new Date();
+    setNow(currentNow);
+
+    if (!name.trim()) {
+      setFormError("სახელი დაგვიტოვე, რომ შეკვეთა მარტივად ამოგიცნოთ.");
+      return;
+    }
+
+    const validation = validatePickupTime({
+      now: currentNow,
+      pickupTime,
+      selections,
+      settings: data.settings,
+    });
+
+    if (!validation.valid) {
+      setFormError(validation.error);
+      return;
+    }
+
+    if (!data.settings.whatsapp.trim()) {
+      setFormError("WhatsApp ახლა მითითებული არ არის. შეგიძლია დაგვირეკო.");
+      return;
+    }
+
+    setFormError(null);
+
+    const message = createOrderMessage({
+      name,
+      note,
+      pickupTime,
+      selections,
+      totalPrice,
+    });
+
+    window.open(
+      createWhatsAppHref(data.settings.whatsapp, message),
+      "_blank",
+      "noopener,noreferrer",
+    );
+  }
+
+  return (
+    <div className="mx-auto flex w-full max-w-[960px] flex-col gap-6 px-4 py-4 pb-28 sm:px-6 sm:py-8 sm:pb-10">
+      <section className="space-y-5">
+        <LunchHero settings={data.settings} />
+        <LunchInfoBar settings={data.settings} />
+        <LunchActions
+          onBrowse={scrollToCards}
+          onPrepare={handlePrepare}
+          settings={data.settings}
+        />
+      </section>
+
+      <LunchList
+        cart={cart}
+        items={publicItems}
+        onDecrease={handleDecrease}
+        onIncrease={handleIncrease}
+        orderingEnabled={data.settings.orderingEnabled}
+        settings={data.settings}
+      />
+
+      {data.settings.orderingEnabled ? (
+        <section className="space-y-4">
+          <LunchSummary
+            className="hidden sm:block"
+            onContinue={handlePrepare}
+            totalCount={totalCount}
+            totalPrice={totalPrice}
+          />
+          {isOrderOpen && totalCount ? (
+            <div id="order-form" ref={orderSectionRef}>
+              <OrderForm
+                formError={formError}
+                hasWhatsApp={Boolean(data.settings.whatsapp.trim())}
+                name={name}
+                note={note}
+                onNameChange={(value) => {
+                  setName(value);
+                  setFormError(null);
+                }}
+                onNoteChange={(value) => setNote(value)}
+                onPickupTimeChange={(value) => {
+                  setPickupTime(value);
+                  setFormError(null);
+                }}
+                onSendWhatsApp={handleSendWhatsApp}
+                phone={data.settings.phone}
+                pickupTime={pickupTime}
+                selections={selections}
+                settings={data.settings}
+                totalPrice={totalPrice}
+                validation={pickupValidation}
+              />
+            </div>
+          ) : null}
+        </section>
+      ) : null}
+
+      <section className="rounded-[30px] border border-border bg-card p-6 shadow-[0_22px_80px_-58px_rgba(34,31,29,0.45)] sm:p-8">
+        <div className="space-y-3">
+          <p className="text-xl font-extrabold tracking-[-0.05em] text-ink sm:text-2xl">
+            {data.settings.utilityNote}
+          </p>
+          <p className="max-w-[42ch] text-base leading-7 text-muted">
+            {data.settings.secondaryUtilityNote}
+          </p>
+        </div>
+      </section>
+
+      <LunchFooter posterPath={posterPath} settings={data.settings} />
+
+      {data.settings.orderingEnabled && !isOrderOpen ? (
+        <LunchSummary
+          floating
+          onContinue={handlePrepare}
+          totalCount={totalCount}
+          totalPrice={totalPrice}
+        />
+      ) : null}
+    </div>
+  );
+}

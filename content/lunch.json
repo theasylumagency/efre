@@ -1,0 +1,103 @@
+{
+  "settings": {
+    "eyebrow": "დღის კომბოები",
+    "pageTitle": "Business Lunch",
+    "subtitle": "სწრაფი ლანჩი სამუშაო დღისთვის",
+    "introLines": [
+      "შეუკვეთე წინასწარ. ან მოდი პირდაპირ.",
+      "მიირთვი აქ — ან წაიღე თან."
+    ],
+    "quietNote": "ჩვენ არ ვართულებთ — დღე ისედაც საკმარისად რთულია.",
+    "utilityNote": "წინასწარი შეკვეთა = ნაკლები ლოდინი",
+    "secondaryUtilityNote": "მიირთვი აქ ან წაიღე თან — როგორც დღეს გაწყობს.",
+    "lunchHoursLabel": "ლანჩი",
+    "lunchHours": "12:00–16:00",
+    "orderingEnabled": true,
+    "phone": "+995 555 12 34 56",
+    "whatsapp": "+995 555 12 34 56",
+    "address": "თბილისი, მისამართი ჩასაწერია 12",
+    "mapUrl": "https://maps.google.com/?q=Tbilisi",
+    "defaultPrepTimeMinutes": 30,
+    "priceMode": "common",
+    "commonPrice": 18
+  },
+  "items": [
+    {
+      "id": "wings",
+      "number": "01",
+      "title": "ქათმის პანირებული ფრთები",
+      "composition": "მჟავე კომბოსტო • პური • საწებელი • კოლა",
+      "active": true,
+      "price": 18,
+      "quantityAvailable": null,
+      "minPrepTimeMinutes": null,
+      "sortOrder": 1
+    },
+    {
+      "id": "pork-family-style",
+      "number": "02",
+      "title": "ღორის ოჯახური",
+      "composition": "საწებელი • კიტრი-პომიდვრის სალათი • კიტრის მჟავე • ლიმონათი",
+      "active": true,
+      "price": 18,
+      "quantityAvailable": null,
+      "minPrepTimeMinutes": null,
+      "sortOrder": 2
+    },
+    {
+      "id": "cutlet",
+      "number": "03",
+      "title": "კატლეტი",
+      "composition": "პიურე • კიტრი-პომიდვრის სალათი • საწებელი • პური • კოკა-კოლა",
+      "active": true,
+      "price": 18,
+      "quantityAvailable": null,
+      "minPrepTimeMinutes": 20,
+      "sortOrder": 3
+    },
+    {
+      "id": "beans",
+      "number": "04",
+      "title": "ლობიო",
+      "composition": "მჭადი • ყველი • მჟავე • ლიმონათი",
+      "active": true,
+      "price": 18,
+      "quantityAvailable": null,
+      "minPrepTimeMinutes": null,
+      "sortOrder": 4
+    },
+    {
+      "id": "imeruli-khachapuri",
+      "number": "05",
+      "title": "იმერული ხაჭაპური",
+      "composition": "კარტოფილი ფრი • კეტჩუპი • კოკა-კოლა",
+      "active": true,
+      "price": 18,
+      "quantityAvailable": null,
+      "minPrepTimeMinutes": null,
+      "sortOrder": 5
+    },
+    {
+      "id": "lobiani",
+      "number": "06",
+      "title": "ლობიანი",
+      "composition": "მჟავე წიწაკა • ბადრიჯანი ნიგვზით • კოკა-კოლა",
+      "active": true,
+      "price": 18,
+      "quantityAvailable": null,
+      "minPrepTimeMinutes": null,
+      "sortOrder": 6
+    },
+    {
+      "id": "chicken-leg",
+      "number": "07",
+      "title": "ქათმის ბარკალი",
+      "composition": "მწვანე სალათი • ყველი • პური • კოკა-კოლა",
+      "active": true,
+      "price": 18,
+      "quantityAvailable": null,
+      "minPrepTimeMinutes": 45,
+      "sortOrder": 7
+    }
+  ]
+}

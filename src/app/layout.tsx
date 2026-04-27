@@ -17,7 +17,8 @@ export const metadata: Metadata = {
     default: "Business Lunch",
     template: "%s | Business Lunch",
   },
-  description: "მობილურით მარტივად გასახსნელი ბიზნეს ლანჩის გვერდი.",
+  description:
+    "მობილურით მარტივად გასახსნელი ბიზნეს ლანჩისა და მსუბუქი წინასწარი შეკვეთის გვერდი.",
   applicationName: "Business Lunch",
   formatDetection: {
     telephone: false,
