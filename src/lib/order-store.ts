@@ -438,31 +438,42 @@ export function getLunchOrderByCode(publicCode: string) {
   return readOrders(database, [row])[0] ?? null;
 }
 
-export function listLunchOrders(limit = 80) {
+export function listLunchOrders(options?: { isArchive?: boolean; limit?: number }) {
+  const { isArchive = false, limit = 80 } = options ?? {};
   const database = getDatabase();
-  const rows = database
-    .prepare(
-      `
-        SELECT
-          id,
-          public_code,
-          customer_name,
-          pickup_time,
-          note,
-          status,
-          total_price,
-          item_count,
-          created_at,
-          acknowledged_at,
-          updated_at
-        FROM orders
-        ORDER BY
-          CASE WHEN status = 'new' THEN 0 ELSE 1 END ASC,
-          created_at DESC
-        LIMIT ?
-      `,
-    )
-    .all(limit) as OrderRow[];
+  const today = toLocalDateTimeString(new Date()).slice(0, 10);
+
+  let query = `
+    SELECT
+      id,
+      public_code,
+      customer_name,
+      pickup_time,
+      note,
+      status,
+      total_price,
+      item_count,
+      created_at,
+      acknowledged_at,
+      updated_at
+    FROM orders
+  `;
+  
+  const params: any[] = [];
+  
+  if (isArchive) {
+    query += ` WHERE substr(created_at, 1, 10) < ? AND status != 'new' `;
+    params.push(today);
+    query += ` ORDER BY created_at DESC LIMIT ?`;
+    params.push(limit);
+  } else {
+    query += ` WHERE substr(created_at, 1, 10) >= ? OR status = 'new' `;
+    params.push(today);
+    query += ` ORDER BY CASE WHEN status = 'new' THEN 0 ELSE 1 END ASC, created_at DESC LIMIT ?`;
+    params.push(limit);
+  }
+
+  const rows = database.prepare(query).all(...params) as OrderRow[];
 
   return readOrders(database, rows);
 }
@@ -498,6 +509,66 @@ export function acknowledgeLunchOrder(publicCode: string) {
       `,
     )
     .run(acknowledgedAt, acknowledgedAt, normalizedCode);
+
+  return getLunchOrderByCode(normalizedCode);
+}
+
+export function completeLunchOrder(publicCode: string) {
+  const normalizedCode = normalizeOrderCode(publicCode);
+
+  if (!normalizedCode) {
+    return null;
+  }
+
+  const database = getDatabase();
+  const currentOrder = getLunchOrderByCode(normalizedCode);
+
+  if (!currentOrder) {
+    return null;
+  }
+
+  const updatedAt = toLocalDateTimeString(new Date());
+  database
+    .prepare(
+      `
+        UPDATE orders
+        SET
+          status = 'completed',
+          updated_at = ?
+        WHERE public_code = ?
+      `,
+    )
+    .run(updatedAt, normalizedCode);
+
+  return getLunchOrderByCode(normalizedCode);
+}
+
+export function cancelLunchOrder(publicCode: string) {
+  const normalizedCode = normalizeOrderCode(publicCode);
+
+  if (!normalizedCode) {
+    return null;
+  }
+
+  const database = getDatabase();
+  const currentOrder = getLunchOrderByCode(normalizedCode);
+
+  if (!currentOrder) {
+    return null;
+  }
+
+  const updatedAt = toLocalDateTimeString(new Date());
+  database
+    .prepare(
+      `
+        UPDATE orders
+        SET
+          status = 'cancelled',
+          updated_at = ?
+        WHERE public_code = ?
+      `,
+    )
+    .run(updatedAt, normalizedCode);
 
   return getLunchOrderByCode(normalizedCode);
 }

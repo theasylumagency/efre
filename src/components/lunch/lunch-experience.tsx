@@ -24,19 +24,31 @@ import { OrderForm } from "@/components/lunch/order-form";
 type LunchExperienceProps = {
   data: LunchData;
   posterPath: string;
+  serverTimeMs?: number;
 };
 
-export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
+export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperienceProps) {
   const router = useRouter();
+  const timeOffsetRef = useRef(serverTimeMs ? serverTimeMs - Date.now() : 0);
+
+  const getSyncedNow = () => new Date(Date.now() + timeOffsetRef.current);
+
   const [cart, setCart] = useState<CartState>({});
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [name, setName] = useState("");
   const [pickupTime, setPickupTime] = useState("");
   const [note, setNote] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState(getSyncedNow);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const orderSectionRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const savedName = localStorage.getItem("efre_customer_name");
+    if (savedName) {
+      setName(savedName);
+    }
+  }, []);
 
   const publicItems = getPublicLunchItems(data);
   const selections = getSelections(publicItems, cart, data.settings);
@@ -52,7 +64,7 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      setNow(new Date());
+      setNow(getSyncedNow());
     }, 60000);
 
     return () => window.clearInterval(intervalId);
@@ -162,7 +174,7 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
   }
 
   async function handleSubmitOrder() {
-    const currentNow = new Date();
+    const currentNow = getSyncedNow();
     setNow(currentNow);
 
     if (!name.trim()) {
@@ -214,6 +226,7 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
         return;
       }
 
+      localStorage.setItem("efre_customer_name", name.trim());
       router.push(result.orderPath);
     } catch {
       setFormError("შეკვეთის გაგზავნა ვერ მოხერხდა.");

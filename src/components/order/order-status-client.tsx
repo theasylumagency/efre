@@ -91,9 +91,9 @@ export function OrderStatusClient({
 
   return (
     <section className="space-y-6">
-      <header className="rounded-[30px] border border-border bg-card p-6 shadow-[0_28px_90px_-58px_rgba(34,31,29,0.45)] sm:p-8">
+      <header className="border border-border bg-card p-6 shadow-[0_28px_90px_-58px_rgba(34,31,29,0.45)] sm:p-8">
         <div className="space-y-4">
-          <div className="inline-flex w-fit items-center rounded-full border border-accent/10 bg-white/75 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-accent">
+          <div className="inline-flex w-fit items-center border border-accent/10 bg-white/75 px-3 py-1 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-accent">
             order status
           </div>
           <div className="space-y-2">
@@ -104,14 +104,14 @@ export function OrderStatusClient({
               {statusCopy.body}
             </p>
           </div>
-          <div className="flex flex-wrap gap-3 text-sm font-semibold text-ink">
-            <div className="rounded-full border border-border bg-card-strong px-4 py-2">
+          <div className="flex flex-wrap gap-3 text-sm font-semibold text-ink font-mono">
+            <div className="border border-border bg-card-strong px-4 py-2">
               კოდი: {order.publicCode}
             </div>
-            <div className="rounded-full border border-border bg-card-strong px-4 py-2">
+            <div className="border border-border bg-card-strong px-4 py-2">
               მოსვლა: {formatLocalTime(order.pickupTime)}
             </div>
-            <div className="rounded-full border border-border bg-card-strong px-4 py-2">
+            <div className="border border-border bg-card-strong px-4 py-2">
               სტატუსი: {getOrderStatusLabel(order.status)}
             </div>
           </div>
@@ -119,18 +119,18 @@ export function OrderStatusClient({
       </header>
 
       <section className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-[24px] border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+        <div className="border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
             1
           </p>
           <p className="mt-2 text-lg font-bold tracking-[-0.04em] text-ink">
             შეკვეთა გაიგზავნა
           </p>
-          <p className="mt-2 text-sm leading-6 text-muted">
+          <p className="mt-2 text-sm leading-6 text-muted font-mono">
             {formatLocalDateTime(order.createdAt)}
           </p>
         </div>
-        <div className="rounded-[24px] border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+        <div className="border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
             2
           </p>
@@ -143,7 +143,7 @@ export function OrderStatusClient({
               : acknowledgedLabel ?? "რესტორანმა შეკვეთა მიიღო."}
           </p>
         </div>
-        <div className="rounded-[24px] border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+        <div className="border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
             3
           </p>
@@ -158,7 +158,7 @@ export function OrderStatusClient({
         </div>
       </section>
 
-      <section className="rounded-[30px] border border-border bg-card p-6 shadow-[0_22px_80px_-58px_rgba(34,31,29,0.45)] sm:p-8">
+      <section className="border border-border bg-card p-6 shadow-[0_22px_80px_-58px_rgba(34,31,29,0.45)] sm:p-8">
         <div className="space-y-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-2">
@@ -169,12 +169,12 @@ export function OrderStatusClient({
                 სახელი: {order.customerName}
               </p>
             </div>
-            <div className="rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink">
+            <div className="border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink font-mono">
               {formatPrice(order.totalPrice) ?? "ფასი დასაზუსტებელია"}
             </div>
           </div>
 
-          <div className="space-y-3 rounded-[24px] border border-border bg-card-strong p-4">
+          <div className="space-y-3 border border-border bg-card-strong p-4">
             {order.items.map((item) => (
               <div
                 className="flex items-center justify-between gap-3 text-sm text-ink"
@@ -191,27 +191,27 @@ export function OrderStatusClient({
           </div>
 
           {order.note ? (
-            <div className="rounded-[24px] border border-border bg-card-strong p-4">
+            <div className="border border-border bg-card-strong p-4">
               <p className="text-sm font-semibold text-ink">შენიშვნა</p>
-              <p className="mt-2 text-sm leading-6 text-muted">{order.note}</p>
+              <p className="mt-2 text-sm font-mono leading-6 text-muted">{order.note}</p>
             </div>
           ) : null}
 
           {fetchError ? (
-            <p className="rounded-2xl border border-accent/15 bg-accent-soft px-4 py-3 text-sm font-medium text-accent">
+            <p className="border border-accent/15 bg-accent-soft px-4 py-3 text-sm font-medium text-accent">
               {fetchError}
             </p>
           ) : null}
 
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-ink transition-colors duration-200 hover:border-accent hover:text-accent hover:shadow-[0_0_10px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               href={lunchPaths.home}
             >
               ლანჩებზე დაბრუნება
             </Link>
             <a
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-ink transition-colors duration-200 hover:border-accent hover:text-accent hover:shadow-[0_0_10px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               href={createTelHref(phone)}
             >
               დარეკე

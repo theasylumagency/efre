@@ -292,6 +292,68 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
     }
   }
 
+  async function handleComplete(publicCode: string) {
+    setBusyCodes((previousCodes) =>
+      previousCodes.includes(publicCode)
+        ? previousCodes
+        : [...previousCodes, publicCode],
+    );
+
+    try {
+      const response = await fetch(
+        `/api/control/orders/${encodeURIComponent(publicCode)}/complete`,
+        { method: "POST" },
+      );
+      const result = (await response.json()) as { message?: string; ok?: boolean; order?: LunchOrder; };
+
+      if (!response.ok || !result.ok || !result.order) {
+        setFetchError(result.message ?? "სტატუსის შეცვლა ვერ მოხერხდა.");
+        return;
+      }
+
+      setOrders((previousOrders) =>
+        sortOrders(previousOrders.map((order) => order.publicCode === publicCode ? result.order! : order)),
+      );
+      setFetchError(null);
+    } catch {
+      setFetchError("სტატუსის შეცვლა ვერ მოხერხდა.");
+    } finally {
+      setBusyCodes((previousCodes) => previousCodes.filter((code) => code !== publicCode));
+    }
+  }
+
+  async function handleCancel(publicCode: string) {
+    if (!window.confirm("ნამდვილად გინდა ამ შეკვეთის გაუქმება?")) return;
+
+    setBusyCodes((previousCodes) =>
+      previousCodes.includes(publicCode)
+        ? previousCodes
+        : [...previousCodes, publicCode],
+    );
+
+    try {
+      const response = await fetch(
+        `/api/control/orders/${encodeURIComponent(publicCode)}/cancel`,
+        { method: "POST" },
+      );
+      const result = (await response.json()) as { message?: string; ok?: boolean; order?: LunchOrder; };
+
+      if (!response.ok || !result.ok || !result.order) {
+        setFetchError(result.message ?? "სტატუსის შეცვლა ვერ მოხერხდა.");
+        return;
+      }
+
+      setOrders((previousOrders) =>
+        sortOrders(previousOrders.map((order) => order.publicCode === publicCode ? result.order! : order)),
+      );
+      setFetchError(null);
+    } catch {
+      setFetchError("სტატუსის შეცვლა ვერ მოხერხდა.");
+    } finally {
+      setBusyCodes((previousCodes) => previousCodes.filter((code) => code !== publicCode));
+    }
+  }
+
   async function toggleSound() {
     if (soundEnabled) {
       setSoundEnabled(false);
@@ -314,10 +376,10 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
 
   return (
     <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 px-4 py-4 sm:px-6 sm:py-8">
-      <header className="rounded-[30px] border border-border bg-card p-6 shadow-[0_28px_90px_-58px_rgba(34,31,29,0.45)] sm:p-8">
+      <header className="border border-border bg-card p-6 shadow-[0_28px_90px_-58px_rgba(34,31,29,0.45)] sm:p-8">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-3">
-            <div className="inline-flex w-fit items-center rounded-full border border-accent/10 bg-white/75 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-accent">
+            <div className="inline-flex w-fit items-center border border-accent/10 bg-white/75 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-accent">
               live control
             </div>
             <div className="space-y-2">
@@ -333,20 +395,26 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <button
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               onClick={() => void toggleSound()}
               type="button"
             >
               {soundEnabled ? "ხმა: ჩართულია" : "ხმა: გამორთულია"}
             </button>
             <Link
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              href="/control/archive"
+            >
+              Archive
+            </Link>
+            <Link
+              className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               href={lunchPaths.admin}
             >
               Admin
             </Link>
             <Link
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               href={lunchPaths.home}
             >
               Public page
@@ -356,7 +424,7 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
       </header>
 
       <section className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-[24px] border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+        <div className="border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
             ელოდება პასუხს
           </p>
@@ -364,7 +432,7 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
             {pendingOrders.length}
           </p>
         </div>
-        <div className="rounded-[24px] border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+        <div className="border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
             მიღებულია
           </p>
@@ -372,9 +440,9 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
             {acknowledgedOrders.length}
           </p>
         </div>
-        <div className="rounded-[24px] border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+        <div className="border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
-            სულ შეკვეთები
+            სულ დღეს
           </p>
           <p className="mt-2 text-3xl font-black tracking-[-0.06em] text-ink">
             {orders.length}
@@ -383,7 +451,7 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
       </section>
 
       {pendingOrders.length ? (
-        <div className="rounded-[24px] border border-accent/15 bg-accent-soft px-5 py-4 text-sm font-medium text-accent">
+        <div className="border border-accent/15 bg-accent-soft px-5 py-4 text-sm font-medium text-accent">
           ახალი შეკვეთები ელოდება დადასტურებას.
           {soundBlocked
             ? " ბრაუზერმა ხმა შეაჩერა — ერთხელ დააჭირე ხმის ღილაკს, რომ ისევ ჩაირთოს."
@@ -392,13 +460,13 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
               : " ხმა ამჟამად გამორთულია."}
         </div>
       ) : (
-        <div className="rounded-[24px] border border-border bg-card px-5 py-4 text-sm font-medium text-muted shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+        <div className="border border-border bg-card px-5 py-4 text-sm font-medium text-muted shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
           ამ წუთას ახალი დაუდასტურებელი შეკვეთა არ არის.
         </div>
       )}
 
       {fetchError ? (
-        <p className="rounded-2xl border border-accent/15 bg-accent-soft px-4 py-3 text-sm font-medium text-accent">
+        <p className="border border-accent/15 bg-accent-soft px-4 py-3 text-sm font-medium text-accent">
           {fetchError}
         </p>
       ) : null}
@@ -418,13 +486,13 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
           <div className="space-y-4">
             {pendingOrders.map((order) => (
               <article
-                className="rounded-[30px] border border-accent/20 bg-white p-5 shadow-[0_22px_80px_-56px_rgba(122,47,57,0.2)] sm:p-6"
+                className="border border-accent/20 bg-white p-5 shadow-[0_22px_80px_-56px_rgba(122,47,57,0.2)] sm:p-6"
                 key={order.publicCode}
               >
                 <div className="flex flex-col gap-5">
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-3">
-                      <div className="inline-flex w-fit items-center rounded-full border border-accent/15 bg-accent-soft px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-accent">
+                      <div className="inline-flex w-fit items-center border border-accent/15 bg-accent-soft px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-accent font-mono">
                         ახალი
                       </div>
                       <div className="space-y-2">
@@ -437,19 +505,19 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
                       </div>
                     </div>
 
-                    <div className="grid gap-2 text-sm text-muted sm:grid-cols-2">
-                      <div className="rounded-2xl border border-border bg-card px-4 py-3">
+                    <div className="grid gap-2 text-sm font-mono text-muted sm:grid-cols-2">
+                      <div className="border border-border bg-card px-4 py-3">
                         <p className="font-semibold text-ink">შემოვიდა</p>
                         <p className="mt-1">{formatLocalDateTime(order.createdAt)}</p>
                       </div>
-                      <div className="rounded-2xl border border-border bg-card px-4 py-3">
+                      <div className="border border-border bg-card px-4 py-3">
                         <p className="font-semibold text-ink">მოსვლა</p>
                         <p className="mt-1">{formatLocalTime(order.pickupTime)}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="rounded-[24px] border border-border bg-card p-4">
+                  <div className="border border-border bg-card p-4">
                     <div className="space-y-2">
                       {order.items.map((item) => (
                         <div
@@ -468,21 +536,21 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
                   </div>
 
                   {order.note ? (
-                    <div className="rounded-[24px] border border-border bg-card p-4">
+                    <div className="border border-border bg-card p-4">
                       <p className="text-sm font-semibold text-ink">შენიშვნა</p>
-                      <p className="mt-2 text-sm leading-6 text-muted">
+                      <p className="mt-2 text-sm leading-6 text-muted font-mono">
                         {order.note}
                       </p>
                     </div>
                   ) : null}
 
                   <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-                    <div className="text-sm leading-6 text-muted">
+                    <div className="text-sm font-mono leading-6 text-muted">
                       {order.itemCount} პორცია •{" "}
-                      {formatPrice(order.totalPrice) ?? "ფასი დასაზუსტებელია"}
+                      <span className="font-bold text-ink">{formatPrice(order.totalPrice) ?? "ფასი დასაზუსტებელია"}</span>
                     </div>
                     <button
-                      className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-paper transition-colors duration-200 hover:bg-accent/92 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex min-h-12 items-center justify-center border border-accent bg-accent px-4 py-3 font-mono text-sm font-bold tracking-wider text-paper uppercase transition-colors duration-200 hover:bg-accent/92 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
                       disabled={busyCodes.includes(order.publicCode)}
                       onClick={() => void handleAcknowledge(order.publicCode)}
                       type="button"
@@ -497,7 +565,7 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
             ))}
           </div>
         ) : (
-          <div className="rounded-[28px] border border-border bg-card p-5 text-sm leading-6 text-muted shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+          <div className="border border-border bg-card p-5 font-mono text-sm leading-6 text-muted shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
             ახალი რიგი ამ მომენტში ცარიელია.
           </div>
         )}
@@ -518,13 +586,13 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
           <div className="space-y-4">
             {acknowledgedOrders.map((order) => (
               <article
-                className="rounded-[30px] border border-border bg-card p-5 shadow-[0_20px_70px_-55px_rgba(34,31,29,0.45)] sm:p-6"
+                className="border border-border bg-card p-5 shadow-[0_20px_70px_-55px_rgba(34,31,29,0.45)] sm:p-6"
                 key={order.publicCode}
               >
                 <div className="flex flex-col gap-5">
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-2">
-                      <div className="inline-flex w-fit items-center rounded-full border border-border bg-card-strong px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-muted">
+                      <div className="inline-flex w-fit items-center border border-border bg-card-strong px-3 py-1 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-muted">
                         მიღებულია
                       </div>
                       <h3 className="text-2xl font-extrabold tracking-[-0.05em] text-ink">
@@ -535,12 +603,12 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
                       </p>
                     </div>
 
-                    <div className="grid gap-2 text-sm text-muted sm:grid-cols-2">
-                      <div className="rounded-2xl border border-border bg-card-strong px-4 py-3">
+                    <div className="grid gap-2 text-sm font-mono text-muted sm:grid-cols-2">
+                      <div className="border border-border bg-card-strong px-4 py-3">
                         <p className="font-semibold text-ink">მოსვლა</p>
                         <p className="mt-1">{formatLocalTime(order.pickupTime)}</p>
                       </div>
-                      <div className="rounded-2xl border border-border bg-card-strong px-4 py-3">
+                      <div className="border border-border bg-card-strong px-4 py-3">
                         <p className="font-semibold text-ink">დადასტურდა</p>
                         <p className="mt-1">
                           {order.acknowledgedAt
@@ -551,7 +619,7 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
                     </div>
                   </div>
 
-                  <div className="rounded-[24px] border border-border bg-card-strong p-4">
+                  <div className="border border-border bg-card-strong p-4">
                     <div className="space-y-2">
                       {order.items.map((item) => (
                         <div
@@ -570,14 +638,35 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
                   </div>
 
                   {order.note ? (
-                    <p className="text-sm leading-6 text-muted">{order.note}</p>
+                    <p className="text-sm font-mono leading-6 text-muted">{order.note}</p>
                   ) : null}
+
+                  {order.status !== "completed" && order.status !== "cancelled" && (
+                    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap pt-4 border-t border-border mt-2">
+                      <button
+                        className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 font-mono text-sm font-bold tracking-wider text-ink uppercase transition-colors duration-200 hover:border-ink hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={busyCodes.includes(order.publicCode)}
+                        onClick={() => void handleComplete(order.publicCode)}
+                        type="button"
+                      >
+                        {busyCodes.includes(order.publicCode) ? "..." : "დასრულება"}
+                      </button>
+                      <button
+                        className="inline-flex min-h-12 items-center justify-center border border-transparent bg-transparent px-4 py-3 font-mono text-sm font-bold tracking-wider text-muted uppercase transition-colors duration-200 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={busyCodes.includes(order.publicCode)}
+                        onClick={() => void handleCancel(order.publicCode)}
+                        type="button"
+                      >
+                        გაუქმება
+                      </button>
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
           </div>
         ) : (
-          <div className="rounded-[28px] border border-border bg-card p-5 text-sm leading-6 text-muted shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+          <div className="border border-border bg-card p-5 font-mono text-sm leading-6 text-muted shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
             დადასტურებული შეკვეთები ჯერ არ არის.
           </div>
         )}

@@ -33,7 +33,7 @@ export default async function LunchPage() {
 
   return (
     <main className="flex-1">
-      <LunchExperience data={data} posterPath={lunchPaths.poster} />
+      <LunchExperience data={data} posterPath={lunchPaths.poster} serverTimeMs={Date.now()} />
     </main>
   );
 }
