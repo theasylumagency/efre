@@ -1,24 +1,22 @@
-import { createAdminSession, validateAdminPassword } from "@/lib/admin-auth";
+import { createAdminSession, validateAdminCredentials } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  const payload = (await request.json()) as { password?: string };
+  const payload = (await request.json()) as { username?: string; password?: string };
+  const username = payload.username ?? "";
   const password = payload.password ?? "";
 
-  if (!(await validateAdminPassword(password))) {
+  if (!(await validateAdminCredentials(username, password))) {
     return Response.json(
       {
         ok: false,
-        message: "პაროლი არასწორია.",
+        message: "მომხმარებელი ან პაროლი არასწორია.",
       },
       { status: 401 },
     );
   }
 
   await createAdminSession();
-
-  return Response.json({
-    ok: true,
-  });
+  return Response.json({ ok: true });
 }

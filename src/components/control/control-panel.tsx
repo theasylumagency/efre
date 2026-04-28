@@ -34,7 +34,10 @@ function sortOrders(orders: LunchOrder[]) {
   });
 }
 
-async function playControlTone(audioContextRef: RefObject<AudioContext | null>) {
+async function playControlTone(
+  audioContextRef: RefObject<AudioContext | null>,
+  escalationLevel = 0,
+) {
   const AudioContextConstructor = window.AudioContext;
 
   if (!AudioContextConstructor) {
@@ -55,47 +58,83 @@ async function playControlTone(audioContextRef: RefObject<AudioContext | null>) 
   const gainNode = audioContext.createGain();
   gainNode.connect(audioContext.destination);
 
-  const scheduleBeep = (offset: number, frequency: number) => {
+  const scheduleBeep = (
+    offset: number,
+    frequency: number,
+    duration = 0.15,
+    type: OscillatorType = "triangle",
+  ) => {
     const oscillator = audioContext.createOscillator();
-    oscillator.type = "triangle";
+    oscillator.type = type;
     oscillator.frequency.setValueAtTime(
       frequency,
       audioContext.currentTime + offset,
     );
     oscillator.connect(gainNode);
     oscillator.start(audioContext.currentTime + offset);
-    oscillator.stop(audioContext.currentTime + offset + 0.15);
+    oscillator.stop(audioContext.currentTime + offset + duration);
   };
 
   gainNode.gain.setValueAtTime(0.0001, audioContext.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(
-    0.12,
-    audioContext.currentTime + 0.02,
-  );
-  gainNode.gain.exponentialRampToValueAtTime(
-    0.0001,
-    audioContext.currentTime + 0.16,
-  );
-  gainNode.gain.exponentialRampToValueAtTime(
-    0.12,
-    audioContext.currentTime + 0.26,
-  );
-  gainNode.gain.exponentialRampToValueAtTime(
-    0.0001,
-    audioContext.currentTime + 0.42,
-  );
 
-  scheduleBeep(0, 660);
-  scheduleBeep(0.22, 880);
+  if (escalationLevel === 0) {
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.12,
+      audioContext.currentTime + 0.02,
+    );
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audioContext.currentTime + 0.16,
+    );
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.12,
+      audioContext.currentTime + 0.26,
+    );
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audioContext.currentTime + 0.42,
+    );
+
+    scheduleBeep(0, 660);
+    scheduleBeep(0.22, 880);
+  } else if (escalationLevel === 1) {
+    for (let i = 0; i < 4; i++) {
+      const offset = i * 0.15;
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.15,
+        audioContext.currentTime + offset + 0.02,
+      );
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audioContext.currentTime + offset + 0.1,
+      );
+      scheduleBeep(offset, 880, 0.1, "square");
+    }
+  } else {
+    for (let i = 0; i < 6; i++) {
+      const offset = i * 0.15;
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.2,
+        audioContext.currentTime + offset + 0.02,
+      );
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audioContext.currentTime + offset + 0.12,
+      );
+      scheduleBeep(offset, i % 2 === 0 ? 1000 : 1200, 0.12, "sawtooth");
+    }
+  }
+
   return true;
 }
 
 async function playControlToneWithState(
   audioContextRef: RefObject<AudioContext | null>,
   setActiveAudioContext: (audioContext: AudioContext) => void,
+  escalationLevel = 0,
 ) {
   const hadAudioContext = Boolean(audioContextRef.current);
-  const didPlay = await playControlTone(audioContextRef);
+  const didPlay = await playControlTone(audioContextRef, escalationLevel);
 
   if (!didPlay || hadAudioContext || !audioContextRef.current) {
     return didPlay;
@@ -116,6 +155,7 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
   );
   const audioContextRef = useRef<AudioContext | null>(null);
   const previousPendingCodesRef = useRef<Set<string>>(new Set());
+  const escalationLevelRef = useRef(0);
 
   const refreshOrders = useEffectEvent(async () => {
     try {
@@ -140,7 +180,7 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
     }
   });
 
-  const playAlertSound = useEffectEvent(async () => {
+  const playAlertSound = useEffectEvent(async (escalationLevel = 0) => {
     if (!soundEnabled) {
       return;
     }
@@ -149,6 +189,7 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
       const didPlay = await playControlToneWithState(
         audioContextRef,
         setActiveAudioContext,
+        escalationLevel,
       );
       setSoundBlocked(!didPlay);
     } catch {
@@ -183,13 +224,17 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
       (publicCode) => !previousPendingCodesRef.current.has(publicCode),
     );
 
+    if (pendingOrders.length === 0 || hasNewPendingOrder) {
+      escalationLevelRef.current = 0;
+    }
+
     previousPendingCodesRef.current = currentPendingCodes;
 
     if (!hasNewPendingOrder || soundBlocked || !soundEnabled) {
       return;
     }
 
-    void playAlertSound();
+    void playAlertSound(escalationLevelRef.current);
   }, [pendingOrders, soundBlocked, soundEnabled]);
 
   useEffect(() => {
@@ -198,7 +243,8 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
     }
 
     const intervalId = window.setInterval(() => {
-      void playAlertSound();
+      escalationLevelRef.current += 1;
+      void playAlertSound(escalationLevelRef.current);
     }, ORDER_ALERT_INTERVAL_MS);
 
     return () => window.clearInterval(intervalId);
@@ -342,7 +388,7 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
           {soundBlocked
             ? " ბრაუზერმა ხმა შეაჩერა — ერთხელ დააჭირე ხმის ღილაკს, რომ ისევ ჩაირთოს."
             : soundEnabled
-              ? " შეხსენების ხმა განმეორდება ყოველ 60 წამში, სანამ ეს სია არ დაცარიელდება."
+              ? " შეხსენების ხმა განმეორდება ყოველ 30 წამში, სანამ ეს სია არ დაცარიელდება."
               : " ხმა ამჟამად გამორთულია."}
         </div>
       ) : (

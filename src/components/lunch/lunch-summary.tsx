@@ -25,13 +25,13 @@ export function LunchSummary({
 
   return (
     <div className={`${containerClassName} ${className}`.trim()}>
-      <section className="rounded-[28px] border border-border bg-ink p-4 text-paper shadow-[0_24px_90px_-48px_rgba(35,31,29,0.7)]">
+      <section className="border border-border bg-ink p-4 text-paper">
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-paper/70">
               შერჩევა
             </p>
-            <p className="text-lg font-bold tracking-[-0.04em]">
+            <p className="font-mono text-xl font-bold tracking-tight">
               {totalCount} პორცია
             </p>
             <p className="text-sm text-paper/70">
@@ -39,7 +39,7 @@ export function LunchSummary({
             </p>
           </div>
           <button
-            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-2xl bg-paper px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-paper"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center border border-transparent bg-paper px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-ink transition-all duration-200 hover:border-accent hover:bg-accent hover:text-background hover:shadow-[0_0_15px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             onClick={onContinue}
             type="button"
           >

@@ -26,7 +26,7 @@ export function LunchList({
           className="text-2xl font-extrabold tracking-[-0.05em] text-ink sm:text-3xl"
           id="lunch-list-title"
         >
-          7 სწრაფი არჩევანი
+          9 სწრაფი არჩევანი
         </h2>
         <p className="max-w-[34ch] text-sm leading-6 text-muted sm:text-base">
           ყველაფერი ერთ ეკრანზეა: კერძი, თანხლება, ფასი და სურვილის შემთხვევაში
@@ -49,7 +49,7 @@ export function LunchList({
           ))}
         </div>
       ) : (
-        <div className="rounded-[30px] border border-border bg-card p-6 text-sm leading-6 text-muted shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+        <div className="border border-border bg-card p-6 text-sm leading-6 text-muted">
           დღეს აქტიური ლანჩები დროებით არ ჩანს. შეგიძლია მოგვიანებით გადაამოწმო
           ან დაგვირეკო.
         </div>

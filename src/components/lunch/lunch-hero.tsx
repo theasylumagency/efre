@@ -9,11 +9,11 @@ type LunchHeroProps = {
 
 export function LunchHero({ settings }: LunchHeroProps) {
   return (
-    <header className="relative overflow-hidden rounded-[30px] border border-border bg-card p-6 shadow-[0_30px_90px_-60px_rgba(34,31,29,0.45)] backdrop-blur sm:p-8">
+    <header className="relative overflow-hidden border border-border bg-card p-6 backdrop-blur sm:p-8">
       <div className="pointer-events-none absolute -right-10 -top-14 h-36 w-36 rounded-full bg-accent-soft blur-3xl" />
       <div className="pointer-events-none absolute -bottom-10 left-8 h-24 w-24 rounded-full bg-paper-strong blur-3xl" />
       <div className="relative flex flex-col gap-6">
-        <div className="inline-flex w-fit items-center rounded-full border border-accent/10 bg-white/75 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-accent">
+        <div className="inline-flex w-fit items-center border border-accent/30 bg-accent-soft px-3 py-1 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-accent shadow-[0_0_10px_var(--color-accent-soft)]">
           {settings.eyebrow}
         </div>
         <div className="space-y-4">

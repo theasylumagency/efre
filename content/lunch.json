@@ -11,15 +11,15 @@
     "utilityNote": "წინასწარი შეკვეთა = ნაკლები ლოდინი",
     "secondaryUtilityNote": "მიირთვი აქ ან წაიღე თან — როგორც დღეს გაწყობს.",
     "lunchHoursLabel": "ლანჩი",
-    "lunchHours": "12:00–16:00",
+    "lunchHours": "5:00–15:00",
     "orderingEnabled": true,
-    "phone": "+995 555 12 34 56",
-    "whatsapp": "+995 555 12 34 56",
-    "address": "თბილისი, მისამართი ჩასაწერია 12",
-    "mapUrl": "https://maps.google.com/?q=Tbilisi",
+    "phone": "+995511704482",
+    "whatsapp": "+995511704482",
+    "address": "თბილისი, ომარ ხიზანიშვილის 154",
+    "mapUrl": "https://maps.app.goo.gl/A5Wo1LaeANBMCnTm6",
     "defaultPrepTimeMinutes": 30,
     "priceMode": "common",
-    "commonPrice": 18
+    "commonPrice": 14.5
   },
   "items": [
     {
@@ -28,7 +28,7 @@
       "title": "ქათმის პანირებული ფრთები",
       "composition": "მჟავე კომბოსტო • პური • საწებელი • კოლა",
       "active": true,
-      "price": 18,
+      "price": 14.5,
       "quantityAvailable": null,
       "minPrepTimeMinutes": null,
       "sortOrder": 1
@@ -39,7 +39,7 @@
       "title": "ღორის ოჯახური",
       "composition": "საწებელი • კიტრი-პომიდვრის სალათი • კიტრის მჟავე • ლიმონათი",
       "active": true,
-      "price": 18,
+      "price": 14.5,
       "quantityAvailable": null,
       "minPrepTimeMinutes": null,
       "sortOrder": 2
@@ -50,7 +50,7 @@
       "title": "კატლეტი",
       "composition": "პიურე • კიტრი-პომიდვრის სალათი • საწებელი • პური • კოკა-კოლა",
       "active": true,
-      "price": 18,
+      "price": 14.5,
       "quantityAvailable": null,
       "minPrepTimeMinutes": 20,
       "sortOrder": 3
@@ -59,9 +59,9 @@
       "id": "beans",
       "number": "04",
       "title": "ლობიო",
-      "composition": "მჭადი • ყველი • მჟავე • ლიმონათი",
+      "composition": "მჭადი • ყველი • მჟავე • კოკა-კოლა ან ლიმონათი",
       "active": true,
-      "price": 18,
+      "price": 14.5,
       "quantityAvailable": null,
       "minPrepTimeMinutes": null,
       "sortOrder": 4
@@ -70,9 +70,9 @@
       "id": "imeruli-khachapuri",
       "number": "05",
       "title": "იმერული ხაჭაპური",
-      "composition": "კარტოფილი ფრი • კეტჩუპი • კოკა-კოლა",
+      "composition": "კარტოფილი ფრი • კეტჩუპი • კოკა-კოლა ან ლიმონათი",
       "active": true,
-      "price": 18,
+      "price": 14.5,
       "quantityAvailable": null,
       "minPrepTimeMinutes": null,
       "sortOrder": 5
@@ -81,9 +81,9 @@
       "id": "lobiani",
       "number": "06",
       "title": "ლობიანი",
-      "composition": "მჟავე წიწაკა • ბადრიჯანი ნიგვზით • კოკა-კოლა",
+      "composition": "მჟავე წიწაკა • ბადრიჯანი ნიგვზით • კოკა-კოლა ან ლიმონათი",
       "active": true,
-      "price": 18,
+      "price": 14.5,
       "quantityAvailable": null,
       "minPrepTimeMinutes": null,
       "sortOrder": 6
@@ -92,12 +92,34 @@
       "id": "chicken-leg",
       "number": "07",
       "title": "ქათმის ბარკალი",
-      "composition": "მწვანე სალათი • ყველი • პური • კოკა-კოლა",
+      "composition": "მწვანე სალათი • ყველი • პური • კოკა-კოლა ან ლიმონათი",
       "active": true,
-      "price": 18,
+      "price": 14.5,
       "quantityAvailable": null,
       "minPrepTimeMinutes": 45,
       "sortOrder": 7
+    },
+    {
+      "id": "family-style-potatoes",
+      "number": "08",
+      "title": "კარტოფილი ოჯახურად",
+      "composition": "ტყემალი • მწვანე სალათი • პური • კოკა-კოლა ან ლიმონათი",
+      "active": true,
+      "price": 14.5,
+      "quantityAvailable": null,
+      "minPrepTimeMinutes": 25,
+      "sortOrder": 8
+    },
+    {
+      "id": "spinach-phali",
+      "number": "09",
+      "title": "ისპანახის ფხალი",
+      "composition": "ბადრიჯანი ნიგვზით • მწვანე სალათი • პური • კოკა კოლა ან ლიმონათი",
+      "active": true,
+      "price": 14.5,
+      "quantityAvailable": null,
+      "minPrepTimeMinutes": 25,
+      "sortOrder": 9
     }
   ]
 }

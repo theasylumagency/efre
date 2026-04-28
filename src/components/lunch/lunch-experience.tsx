@@ -9,6 +9,7 @@ import {
   getSelectionCount,
   getSelections,
   getTotalPrice,
+  timeToDate,
   validatePickupTime,
   type CartState,
 } from "@/lib/lunch";
@@ -56,6 +57,25 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
 
     return () => window.clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    if (!isOrderOpen || !pickupConstraints.orderableToday || !pickupTime) {
+      return;
+    }
+
+    const currentSelectedDate = timeToDate(pickupTime, now);
+
+    if (currentSelectedDate && currentSelectedDate < pickupConstraints.earliestDate) {
+      setPickupTime(pickupConstraints.earliestTime);
+    }
+  }, [
+    pickupConstraints.earliestDate,
+    pickupConstraints.earliestTime,
+    pickupConstraints.orderableToday,
+    pickupTime,
+    now,
+    isOrderOpen,
+  ]);
 
   function scrollToCards() {
     document
@@ -132,8 +152,10 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
     setFormError(null);
     setIsOrderOpen(true);
 
-    if (!pickupTime) {
+    if (pickupConstraints.orderableToday && !pickupTime) {
       setPickupTime(pickupConstraints.earliestTime);
+    } else if (!pickupConstraints.orderableToday) {
+      setPickupTime("");
     }
 
     scrollToOrder();
@@ -258,7 +280,7 @@ export function LunchExperience({ data, posterPath }: LunchExperienceProps) {
         </section>
       ) : null}
 
-      <section className="rounded-[30px] border border-border bg-card p-6 shadow-[0_22px_80px_-58px_rgba(34,31,29,0.45)] sm:p-8">
+      <section className="border border-border bg-card p-6 sm:p-8">
         <div className="space-y-3">
           <p className="text-xl font-extrabold tracking-[-0.05em] text-ink sm:text-2xl">
             {data.settings.utilityNote}

@@ -21,7 +21,7 @@ export function LunchActions({
     : null;
 
   return (
-    <section className="rounded-[30px] border border-border bg-card p-5 shadow-[0_22px_70px_-56px_rgba(34,31,29,0.45)] sm:p-6">
+    <section className="border border-border bg-card p-5 sm:p-6">
       <div className="flex flex-col gap-5">
         <div className="space-y-2">
           <h2 className="text-xl font-extrabold tracking-[-0.05em] text-ink sm:text-2xl">
@@ -36,7 +36,7 @@ export function LunchActions({
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <button
-            className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-ink transition-all duration-200 hover:border-accent hover:text-accent hover:shadow-[0_0_10px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             onClick={onBrowse}
             type="button"
           >
@@ -44,7 +44,7 @@ export function LunchActions({
           </button>
           {settings.orderingEnabled && onPrepare ? (
             <button
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-paper transition-colors duration-200 hover:bg-accent/92 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="inline-flex min-h-12 items-center justify-center border border-transparent bg-accent px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-background transition-all duration-200 hover:bg-accent/90 hover:shadow-[0_0_15px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               onClick={onPrepare}
               type="button"
             >
@@ -52,14 +52,14 @@ export function LunchActions({
             </button>
           ) : null}
           <a
-            className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-ink transition-all duration-200 hover:border-accent hover:text-accent hover:shadow-[0_0_10px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             href={createTelHref(settings.phone)}
           >
             დარეკე
           </a>
           {genericWhatsAppHref ? (
             <a
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-accent/15 bg-accent-soft px-4 py-3 text-sm font-semibold text-accent transition-colors duration-200 hover:border-accent/35 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="inline-flex min-h-12 items-center justify-center border border-accent/30 bg-accent-soft px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-accent transition-all duration-200 hover:border-accent/50 hover:bg-accent hover:text-background hover:shadow-[0_0_15px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               href={genericWhatsAppHref}
               rel="noreferrer"
               target="_blank"

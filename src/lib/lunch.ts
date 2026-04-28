@@ -72,7 +72,7 @@ function fromTimeNumber(value: number) {
   return `${padNumber(hours)}:${padNumber(minutes)}`;
 }
 
-function timeToDate(time: string, reference: Date) {
+export function timeToDate(time: string, reference: Date) {
   const numericValue = toTimeNumber(time);
 
   if (numericValue === null) {
@@ -100,8 +100,9 @@ export function formatPrice(value: number | null) {
     return null;
   }
 
-  const formatted = new Intl.NumberFormat("ka-GE", {
+  const formatted = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 2,
+    useGrouping: false,
   }).format(value);
 
   return `${formatted} ₾`;
@@ -244,19 +245,24 @@ export function getPickupConstraints(
   now: Date,
 ): PickupConstraints {
   const maxPrepTimeMinutes = getMaxPrepTimeMinutes(settings, selections);
-  const earliestDate = roundUpToMinute(addMinutes(now, maxPrepTimeMinutes));
+  let earliestDate = roundUpToMinute(addMinutes(now, maxPrepTimeMinutes));
   const lunchHoursRange = parseLunchHoursRange(settings.lunchHours);
 
   let orderableToday = true;
   let availabilityMessage: string | null = null;
 
   if (lunchHoursRange) {
+    const startDate = timeToDate(lunchHoursRange.start, now);
     const endDate = timeToDate(lunchHoursRange.end, now);
+
+    if (startDate && earliestDate < startDate) {
+      earliestDate = startDate;
+    }
 
     if (endDate && earliestDate > endDate) {
       orderableToday = false;
       availabilityMessage =
-        "დღევანდელი წინასწარი შეკვეთა ამ დროისთვის ვეღარ ეტევა. შეგიძლია პირდაპირაც მოხვიდე ან დაგვირეკო.";
+        "დღევანდელი წინასწარი შეკვეთა ამ დროისთვის ვეღარ ესწრება. შეგიძლია პირდაპირ მოხვიდე ან დაგვირეკო.";
     }
   }
 

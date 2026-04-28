@@ -40,7 +40,7 @@ export function OrderForm({
   }
 
   return (
-    <section className="rounded-[30px] border border-border bg-card p-6 shadow-[0_22px_80px_-58px_rgba(34,31,29,0.45)] sm:p-8">
+    <section className="border border-border bg-card p-6 sm:p-8">
       <div className="space-y-6">
         <div className="space-y-3">
           <h2 className="text-2xl font-extrabold tracking-[-0.05em] text-ink sm:text-3xl">
@@ -52,7 +52,7 @@ export function OrderForm({
           </p>
         </div>
 
-        <div className="rounded-[24px] border border-border bg-card-strong p-4">
+        <div className="border border-border bg-card-strong p-4">
           <p className="text-sm font-semibold text-ink">
             ახლა არჩეული ლანჩებისთვის ყველაზე ადრე შეგვიძლია{" "}
             <span className="text-accent">{validation.earliestTime}</span>-ისთვის.
@@ -65,11 +65,18 @@ export function OrderForm({
           </p>
         </div>
 
+        {!validation.orderableToday ? (
+          <p className="border border-accent/30 bg-accent-soft px-4 py-3 font-mono text-[0.8rem] font-medium leading-6 text-accent shadow-[0_0_10px_var(--color-accent-soft)]">
+            {validation.availabilityMessage ??
+              "დღევანდელი წინასწარი შეკვეთა ამ დროისთვის ვეღარ ესწრება. შეგიძლია პირდაპირ მოხვიდე ან დაგვირეკო."}
+          </p>
+        ) : null}
+
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="space-y-2">
             <span className="text-sm font-semibold text-ink">სახელი</span>
             <input
-              className="min-h-12 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent"
+              className="min-h-12 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
               onChange={(event) => onNameChange(event.target.value)}
               placeholder="მაგ: ნინო"
               type="text"
@@ -79,7 +86,7 @@ export function OrderForm({
           <label className="space-y-2">
             <span className="text-sm font-semibold text-ink">მოსვლის დრო</span>
             <input
-              className="min-h-12 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent"
+              className="min-h-12 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
               max={validation.lunchHoursRange?.end}
               min={validation.lunchHoursRange?.start}
               onChange={(event) => onPickupTimeChange(event.target.value)}
@@ -95,14 +102,14 @@ export function OrderForm({
             შენიშვნა თუ გაქვს
           </span>
           <textarea
-            className="min-h-28 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent"
+            className="min-h-28 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
             onChange={(event) => onNoteChange(event.target.value)}
             placeholder="მაგ: მოვალ ზუსტად 14:29-ზე"
             value={note}
           />
         </label>
 
-        <div className="rounded-[24px] border border-border bg-card-strong p-4">
+        <div className="border border-border bg-card-strong p-4">
           <div className="space-y-3">
             <p className="text-sm font-semibold text-ink">შენი არჩევანი</p>
             <div className="space-y-2">
@@ -115,7 +122,7 @@ export function OrderForm({
                     {selection.item.number} ×{selection.quantity} —{" "}
                     {selection.item.title}
                   </span>
-                  <span className="whitespace-nowrap font-semibold text-muted">
+                  <span className="whitespace-nowrap font-mono font-bold text-muted">
                     {formatPrice(selection.lineTotal)}
                   </span>
                 </div>
@@ -123,28 +130,28 @@ export function OrderForm({
             </div>
             <div className="flex items-center justify-between gap-3 border-t border-border pt-3 text-sm font-semibold text-ink">
               <span>ჯამი</span>
-              <span>{formatPrice(totalPrice) ?? "ფასი დასაზუსტებელია"}</span>
+              <span className="font-mono">{formatPrice(totalPrice) ?? "ფასი დასაზუსტებელია"}</span>
             </div>
           </div>
         </div>
 
         {formError ? (
-          <p className="rounded-2xl border border-accent/15 bg-accent-soft px-4 py-3 text-sm font-medium text-accent">
+          <p className="border border-accent/30 bg-accent-soft px-4 py-3 font-mono text-[0.8rem] font-medium text-accent">
             {formError}
           </p>
         ) : null}
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <button
-            className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-paper transition-colors duration-200 hover:bg-accent/92 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-55"
-            disabled={!validation.orderableToday || isSubmitting}
+            className="inline-flex min-h-12 items-center justify-center border border-transparent bg-accent px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-background transition-all duration-200 hover:bg-accent/90 hover:shadow-[0_0_15px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-55"
+            disabled={isSubmitting}
             onClick={onSubmitOrder}
             type="button"
           >
             {isSubmitting ? "იგზავნება..." : "წინასწარ მომიმზადეთ"}
           </button>
           <a
-            className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-ink transition-all duration-200 hover:border-accent hover:text-accent hover:shadow-[0_0_10px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             href={createTelHref(phone)}
           >
             დარეკე

@@ -1,6 +1,6 @@
 export const CONTROL_POLL_INTERVAL_MS = 5_000;
 export const ORDER_POLL_INTERVAL_MS = 7_000;
-export const ORDER_ALERT_INTERVAL_MS = 60_000;
+export const ORDER_ALERT_INTERVAL_MS = 30_000;
 
 export type OrderStatus = "new" | "acknowledged" | "completed" | "cancelled";
 

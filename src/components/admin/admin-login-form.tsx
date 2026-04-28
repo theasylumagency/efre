@@ -11,6 +11,7 @@ export function AdminLoginForm({
   description = "აქედან იცვლება lunch JSON-ის ტექსტი, საათები, ფასები და აქტიური კომბოები.",
   title = "Admin",
 }: AdminLoginFormProps) {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -25,7 +26,7 @@ export function AdminLoginForm({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username, password }),
       });
 
       const result = (await response.json()) as {
@@ -43,7 +44,7 @@ export function AdminLoginForm({
   }
 
   return (
-    <section className="mx-auto w-full max-w-[440px] rounded-[30px] border border-border bg-card p-6 shadow-[0_28px_80px_-58px_rgba(34,31,29,0.45)] sm:p-8">
+    <section className="mx-auto w-full max-w-[440px] border border-border bg-card p-6 sm:p-8">
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div className="space-y-2">
           <h1 className="text-2xl font-extrabold tracking-[-0.05em] text-ink">
@@ -53,9 +54,19 @@ export function AdminLoginForm({
         </div>
 
         <label className="space-y-2">
+          <span className="text-sm font-semibold text-ink">მომხმარებელი (არასავალდებულო)</span>
+          <input
+            className="min-h-12 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
+            onChange={(event) => setUsername(event.target.value)}
+            type="text"
+            value={username}
+          />
+        </label>
+
+        <label className="space-y-2">
           <span className="text-sm font-semibold text-ink">პაროლი</span>
           <input
-            className="min-h-12 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent"
+            className="min-h-12 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
             onChange={(event) => setPassword(event.target.value)}
             type="password"
             value={password}
@@ -69,7 +80,7 @@ export function AdminLoginForm({
         ) : null}
 
         <button
-          className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-paper transition-colors duration-200 hover:bg-accent/92 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-12 w-full items-center justify-center border border-transparent bg-accent px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-background transition-all duration-200 hover:bg-accent/90 hover:shadow-[0_0_15px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isPending}
           type="submit"
         >

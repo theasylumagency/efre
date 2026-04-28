@@ -36,9 +36,9 @@ export function PosterQr({ targetPath, configuredSiteUrl }: PosterQrProps) {
   }, [targetUrl]);
 
   return (
-    <div className="rounded-[30px] border border-border bg-card-strong p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)]">
+    <div className="border border-border bg-card-strong p-5">
       <div className="space-y-4">
-        <div className="rounded-[24px] border border-border bg-white p-4">
+        <div className="border border-border bg-white p-4">
           {svgMarkup ? (
             <div
               aria-label="QR code for the main business lunch page"
@@ -46,11 +46,11 @@ export function PosterQr({ targetPath, configuredSiteUrl }: PosterQrProps) {
               dangerouslySetInnerHTML={{ __html: svgMarkup }}
             />
           ) : (
-            <div className="mx-auto aspect-square w-full max-w-[280px] animate-pulse rounded-[18px] bg-paper-strong" />
+            <div className="mx-auto aspect-square w-full max-w-[280px] animate-pulse bg-paper-strong" />
           )}
         </div>
         <div className="space-y-2 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.24em] text-muted">
             დაასკანერე და გახსენი ლანჩი
           </p>
           <p
