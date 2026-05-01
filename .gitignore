@@ -25,6 +25,7 @@
 /data/*.db
 /data/*.db-shm
 /data/*.db-wal
+/content/lunch.json
 
 # misc
 .DS_Store
