@@ -18,11 +18,13 @@ type OrderRow = {
   acknowledged_at: string | null;
   created_at: string;
   customer_name: string;
+  customer_phone: string;
   id: number;
   item_count: number;
   note: string;
   pickup_time: string;
   public_code: string;
+  requires_confirmation: number;
   status: OrderStatus;
   total_price: number | null;
   updated_at: string;
@@ -98,17 +100,26 @@ function initializeDatabase(database: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_order_items_order_id
       ON order_items(order_id);
   `);
+
+  try {
+    database.exec("ALTER TABLE orders ADD COLUMN customer_phone TEXT NOT NULL DEFAULT ''");
+  } catch {}
+
+  try {
+    database.exec("ALTER TABLE orders ADD COLUMN requires_confirmation INTEGER NOT NULL DEFAULT 0");
+  } catch {}
 }
 
 function getDatabase() {
   if (!globalThis.__lunchOrdersDatabase) {
     mkdirSync(path.dirname(ordersDbFilePath), { recursive: true });
-    const database = new Database(ordersDbFilePath);
-    initializeDatabase(database);
-    globalThis.__lunchOrdersDatabase = database;
+    globalThis.__lunchOrdersDatabase = new Database(ordersDbFilePath);
   }
 
-  return globalThis.__lunchOrdersDatabase;
+  const database = globalThis.__lunchOrdersDatabase;
+  initializeDatabase(database);
+
+  return database;
 }
 
 function normalizeOrderCode(value: string) {
@@ -202,11 +213,13 @@ function mapOrder(
     acknowledgedAt: row.acknowledged_at,
     createdAt: row.created_at,
     customerName: row.customer_name,
+    customerPhone: row.customer_phone ?? "",
     itemCount: row.item_count,
     items,
     note: row.note,
     pickupTime: row.pickup_time,
     publicCode: row.public_code,
+    requiresConfirmation: Boolean(row.requires_confirmation),
     status: row.status,
     totalPrice: row.total_price,
     updatedAt: row.updated_at,
@@ -234,12 +247,24 @@ export async function createLunchOrder(input: CreateLunchOrderInput) {
 
   const customerName =
     typeof input.customerName === "string" ? input.customerName.trim() : "";
+    
+  const rawCustomerPhone =
+    typeof input.customerPhone === "string" ? input.customerPhone.replace(/\D/g, "") : "";
+  const customerPhone =
+    rawCustomerPhone.length === 12 && rawCustomerPhone.startsWith("995")
+      ? rawCustomerPhone.slice(3)
+      : rawCustomerPhone;
+
   const pickupTime =
     typeof input.pickupTime === "string" ? input.pickupTime.trim() : "";
   const note = typeof input.note === "string" ? input.note.trim().slice(0, 500) : "";
 
   if (!customerName) {
     throw new LunchOrderError("სახელი აუცილებელია.");
+  }
+
+  if (customerPhone.length !== 9) {
+    throw new LunchOrderError("ტელეფონის ნომერი უნდა შედგებოდეს 9 ციფრისგან.");
   }
 
   const rawItems = Array.isArray(input.items) ? input.items : [];
@@ -329,6 +354,14 @@ export async function createLunchOrder(input: CreateLunchOrderInput) {
   const database = getDatabase();
   const publicCode = createUniqueOrderCode(database);
 
+  const isNewPhone =
+    (
+      database
+        .prepare("SELECT COUNT(*) as count FROM orders WHERE customer_phone = ?")
+        .get(customerPhone) as { count: number }
+    ).count === 0;
+  const requiresConfirmation = isNewPhone && itemCount >= 5 ? 1 : 0;
+
   database.transaction(() => {
     const orderResult = database
       .prepare(
@@ -336,24 +369,28 @@ export async function createLunchOrder(input: CreateLunchOrderInput) {
           INSERT INTO orders (
             public_code,
             customer_name,
+            customer_phone,
             pickup_time,
             note,
             status,
             total_price,
             item_count,
+            requires_confirmation,
             created_at,
             updated_at
           )
-          VALUES (?, ?, ?, ?, 'new', ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, 'new', ?, ?, ?, ?, ?)
         `,
       )
       .run(
         publicCode,
         customerName,
+        customerPhone,
         pickupDateTime,
         note,
         totalPrice,
         itemCount,
+        requiresConfirmation,
         createdAt,
         createdAt,
       );
@@ -416,11 +453,13 @@ export function getLunchOrderByCode(publicCode: string) {
           id,
           public_code,
           customer_name,
+          customer_phone,
           pickup_time,
           note,
           status,
           total_price,
           item_count,
+          requires_confirmation,
           created_at,
           acknowledged_at,
           updated_at
@@ -448,11 +487,13 @@ export function listLunchOrders(options?: { isArchive?: boolean; limit?: number 
       id,
       public_code,
       customer_name,
+      customer_phone,
       pickup_time,
       note,
       status,
       total_price,
       item_count,
+      requires_confirmation,
       created_at,
       acknowledged_at,
       updated_at

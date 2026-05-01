@@ -36,6 +36,7 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
   const [cart, setCart] = useState<CartState>({});
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [name, setName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const [pickupTime, setPickupTime] = useState("");
   const [note, setNote] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
@@ -47,6 +48,10 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
     const savedName = localStorage.getItem("efre_customer_name");
     if (savedName) {
       setName(savedName);
+    }
+    const savedPhone = localStorage.getItem("efre_customer_phone");
+    if (savedPhone) {
+      setCustomerPhone(savedPhone);
     }
   }, []);
 
@@ -182,6 +187,16 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
       return;
     }
 
+    const rawCustomerPhone = customerPhone.replace(/\D/g, "");
+    const finalPhone = rawCustomerPhone.length === 12 && rawCustomerPhone.startsWith("995")
+      ? rawCustomerPhone.slice(3)
+      : rawCustomerPhone;
+
+    if (finalPhone.length !== 9) {
+      setFormError("ტელეფონის ნომერი უნდა შედგებოდეს 9 ციფრისგან.");
+      return;
+    }
+
     const validation = validatePickupTime({
       now: currentNow,
       pickupTime,
@@ -206,6 +221,7 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
         },
         body: JSON.stringify({
           customerName: name.trim(),
+          customerPhone: finalPhone,
           items: selections.map((selection) => ({
             id: selection.item.id,
             quantity: selection.quantity,
@@ -227,6 +243,7 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
       }
 
       localStorage.setItem("efre_customer_name", name.trim());
+      localStorage.setItem("efre_customer_phone", finalPhone);
       router.push(result.orderPath);
     } catch {
       setFormError("შეკვეთის გაგზავნა ვერ მოხერხდა.");
@@ -273,6 +290,11 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
                 note={note}
                 onNameChange={(value) => {
                   setName(value);
+                  setFormError(null);
+                }}
+                customerPhone={customerPhone}
+                onCustomerPhoneChange={(value) => {
+                  setCustomerPhone(value);
                   setFormError(null);
                 }}
                 onNoteChange={(value) => setNote(value)}

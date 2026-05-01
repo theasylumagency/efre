@@ -18,11 +18,13 @@ export type OrderLineItem = {
 export type LunchOrder = {
   publicCode: string;
   customerName: string;
+  customerPhone: string;
   pickupTime: string;
   note: string;
   status: OrderStatus;
   totalPrice: number | null;
   itemCount: number;
+  requiresConfirmation: boolean;
   createdAt: string;
   acknowledgedAt: string | null;
   updatedAt: string;
@@ -36,6 +38,7 @@ export type LunchOrderItemInput = {
 
 export type CreateLunchOrderInput = {
   customerName: string;
+  customerPhone: string;
   pickupTime: string;
   note?: string;
   items: LunchOrderItemInput[];

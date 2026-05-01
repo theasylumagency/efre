@@ -499,20 +499,37 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
                         <h3 className="text-2xl font-extrabold tracking-[-0.05em] text-ink">
                           {order.publicCode}
                         </h3>
-                        <p className="text-lg font-semibold text-ink">
-                          {order.customerName}
-                        </p>
+                        <div className="space-y-1">
+                          <p className="text-lg font-semibold text-ink">
+                            {order.customerName}
+                          </p>
+                          {order.customerPhone ? (
+                            <p className="font-mono text-sm text-muted">
+                              <a className="hover:text-ink hover:underline transition-colors duration-200" href={`tel:+995${order.customerPhone}`}>
+                                +995 {order.customerPhone.slice(0, 3)} {order.customerPhone.slice(3, 6)} {order.customerPhone.slice(6)}
+                              </a>
+                            </p>
+                          ) : null}
+                        </div>
                       </div>
                     </div>
+
+                    {order.requiresConfirmation ? (
+                      <div className="border border-accent/30 bg-accent-soft p-4 shadow-[0_0_15px_var(--color-accent-soft)] mt-2">
+                        <p className="text-sm font-bold text-accent uppercase tracking-wide">
+                          ⚠️ დიდი შეკვეთა ახალი ნომრიდან — დარეკეთ დასადასტურებლად!
+                        </p>
+                      </div>
+                    ) : null}
 
                     <div className="grid gap-2 text-sm font-mono text-muted sm:grid-cols-2">
                       <div className="border border-border bg-card px-4 py-3">
                         <p className="font-semibold text-ink">შემოვიდა</p>
-                        <p className="mt-1">{formatLocalDateTime(order.createdAt)}</p>
+                        <p className="mt-1" suppressHydrationWarning>{formatLocalDateTime(order.createdAt)}</p>
                       </div>
                       <div className="border border-border bg-card px-4 py-3">
                         <p className="font-semibold text-ink">მოსვლა</p>
-                        <p className="mt-1">{formatLocalTime(order.pickupTime)}</p>
+                        <p className="mt-1" suppressHydrationWarning>{formatLocalTime(order.pickupTime)}</p>
                       </div>
                     </div>
                   </div>
@@ -598,19 +615,28 @@ export function ControlPanel({ initialOrders }: ControlPanelProps) {
                       <h3 className="text-2xl font-extrabold tracking-[-0.05em] text-ink">
                         {order.publicCode}
                       </h3>
-                      <p className="text-lg font-semibold text-ink">
-                        {order.customerName}
-                      </p>
+                      <div className="space-y-1">
+                        <p className="text-lg font-semibold text-ink">
+                          {order.customerName}
+                        </p>
+                        {order.customerPhone ? (
+                          <p className="font-mono text-sm text-muted">
+                            <a className="hover:text-ink hover:underline transition-colors duration-200" href={`tel:+995${order.customerPhone}`}>
+                              +995 {order.customerPhone.slice(0, 3)} {order.customerPhone.slice(3, 6)} {order.customerPhone.slice(6)}
+                            </a>
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
 
                     <div className="grid gap-2 text-sm font-mono text-muted sm:grid-cols-2">
                       <div className="border border-border bg-card-strong px-4 py-3">
                         <p className="font-semibold text-ink">მოსვლა</p>
-                        <p className="mt-1">{formatLocalTime(order.pickupTime)}</p>
+                        <p className="mt-1" suppressHydrationWarning>{formatLocalTime(order.pickupTime)}</p>
                       </div>
                       <div className="border border-border bg-card-strong px-4 py-3">
                         <p className="font-semibold text-ink">დადასტურდა</p>
-                        <p className="mt-1">
+                        <p className="mt-1" suppressHydrationWarning>
                           {order.acknowledgedAt
                             ? formatLocalDateTime(order.acknowledgedAt)
                             : "—"}

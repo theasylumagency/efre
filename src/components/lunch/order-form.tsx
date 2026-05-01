@@ -11,6 +11,8 @@ type OrderFormProps = {
   onNoteChange: (value: string) => void;
   onPickupTimeChange: (value: string) => void;
   onSubmitOrder: () => void;
+  customerPhone: string;
+  onCustomerPhoneChange: (value: string) => void;
   phone: string;
   pickupTime: string;
   selections: LunchSelection[];
@@ -28,6 +30,8 @@ export function OrderForm({
   onNoteChange,
   onPickupTimeChange,
   onSubmitOrder,
+  customerPhone,
+  onCustomerPhoneChange,
   phone,
   pickupTime,
   selections,
@@ -82,6 +86,19 @@ export function OrderForm({
               type="text"
               value={name}
             />
+          </label>
+          <label className="space-y-2">
+            <span className="text-sm font-semibold text-ink">ტელეფონის ნომერი</span>
+            <input
+              className="min-h-12 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
+              onChange={(event) => onCustomerPhoneChange(event.target.value)}
+              placeholder="მაგ: 555 12 34 56"
+              type="tel"
+              value={customerPhone}
+            />
+            <p className="text-[0.8rem] text-muted leading-relaxed">
+              დაზუსტების აუცილებლობის შემთხვევაში ამ ნომერზე დაგიკავშირდებით.
+            </p>
           </label>
           <label className="space-y-2">
             <span className="text-sm font-semibold text-ink">მოსვლის დრო</span>

@@ -108,7 +108,7 @@ export function OrderStatusClient({
             <div className="border border-border bg-card-strong px-4 py-2">
               კოდი: {order.publicCode}
             </div>
-            <div className="border border-border bg-card-strong px-4 py-2">
+            <div className="border border-border bg-card-strong px-4 py-2" suppressHydrationWarning>
               მოსვლა: {formatLocalTime(order.pickupTime)}
             </div>
             <div className="border border-border bg-card-strong px-4 py-2">
@@ -126,7 +126,7 @@ export function OrderStatusClient({
           <p className="mt-2 text-lg font-bold tracking-[-0.04em] text-ink">
             შეკვეთა გაიგზავნა
           </p>
-          <p className="mt-2 text-sm leading-6 text-muted font-mono">
+          <p className="mt-2 text-sm leading-6 text-muted font-mono" suppressHydrationWarning>
             {formatLocalDateTime(order.createdAt)}
           </p>
         </div>
@@ -137,7 +137,7 @@ export function OrderStatusClient({
           <p className="mt-2 text-lg font-bold tracking-[-0.04em] text-ink">
             {order.status === "new" ? "ველოდებით პასუხს" : "დადასტურება"}
           </p>
-          <p className="mt-2 text-sm leading-6 text-muted">
+          <p className="mt-2 text-sm leading-6 text-muted" suppressHydrationWarning>
             {order.status === "new"
               ? "გვერდი თავისით ახლდება დაახლოებით ყოველ 7 წამში."
               : acknowledgedLabel ?? "რესტორანმა შეკვეთა მიიღო."}
