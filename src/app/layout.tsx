@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Noto_Sans_Georgian, Space_Mono } from "next/font/google";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
+import { Suspense } from "react";
+import MetaPixel from "@/components/MetaPixel";
 
 const notoSansGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-sans-georgian",
@@ -61,6 +63,9 @@ export default function RootLayout({
       className={`${notoSansGeorgian.variable} ${spaceMono.variable} h-full scroll-smooth antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        <Suspense fallback={null}>
+          <MetaPixel />
+        </Suspense>
         {children}
       </body>
     </html>
