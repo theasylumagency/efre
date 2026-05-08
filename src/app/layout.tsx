@@ -23,8 +23,8 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: siteUrl ?? undefined,
   title: {
-    default: "რესტორანი ეფრე",
-    template: "%s | Business Lunch",
+    default: "ეფრე — ურბანული პაბი გლდანში",
+    template: "%s | ეფრე",
   },
   icons: {
     icon: [
@@ -45,8 +45,8 @@ export const metadata: Metadata = {
     ],
   },
   description:
-    "მობილურით მარტივად გასახსნელი ბიზნეს ლანჩისა და მსუბუქი წინასწარი შეკვეთის გვერდი.",
-  applicationName: "Business Lunch",
+    "ეფრე არის ურბანული პაბი გლდანში — ლანჩისთვის, საღამოსთვის, საჭმლისთვის, სასმლისთვის და პატარა შვებისთვის ქალაქის შემდეგ.",
+  applicationName: "ეფრე",
   formatDetection: {
     telephone: false,
   },

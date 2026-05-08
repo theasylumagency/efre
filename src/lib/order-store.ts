@@ -500,7 +500,7 @@ export function listLunchOrders(options?: { isArchive?: boolean; limit?: number 
     FROM orders
   `;
   
-  const params: any[] = [];
+  const params: Array<number | string> = [];
   
   if (isArchive) {
     query += ` WHERE substr(created_at, 1, 10) < ? AND status != 'new' `;

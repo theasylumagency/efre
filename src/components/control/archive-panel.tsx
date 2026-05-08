@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import type { LunchOrder } from "@/data/orders";
-import { lunchPaths } from "@/data/lunch";
 import { formatPrice } from "@/lib/lunch";
 import { formatLocalDateTime, formatLocalTime } from "@/lib/local-date-time";
 

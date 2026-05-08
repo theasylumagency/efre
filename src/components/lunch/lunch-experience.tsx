@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { LunchData, LunchItem } from "@/data/lunch";
 import {
   getPickupConstraints,
@@ -29,9 +29,13 @@ type LunchExperienceProps = {
 
 export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperienceProps) {
   const router = useRouter();
-  const timeOffsetRef = useRef(serverTimeMs ? serverTimeMs - Date.now() : 0);
+  const getCurrentTimeMs = useCallback(() => Number(new Date()), []);
+  const timeOffsetRef = useRef(serverTimeMs ? serverTimeMs - getCurrentTimeMs() : 0);
 
-  const getSyncedNow = () => new Date(Date.now() + timeOffsetRef.current);
+  const getSyncedNow = useCallback(
+    () => new Date(getCurrentTimeMs() + timeOffsetRef.current),
+    [getCurrentTimeMs],
+  );
 
   const [cart, setCart] = useState<CartState>({});
   const [isOrderOpen, setIsOrderOpen] = useState(false);
@@ -40,18 +44,18 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
   const [pickupTime, setPickupTime] = useState("");
   const [note, setNote] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
-  const [now, setNow] = useState(getSyncedNow);
+  const [now, setNow] = useState(() => new Date(serverTimeMs ?? getCurrentTimeMs()));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const orderSectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const savedName = localStorage.getItem("efre_customer_name");
     if (savedName) {
-      setName(savedName);
+      window.queueMicrotask(() => setName(savedName));
     }
     const savedPhone = localStorage.getItem("efre_customer_phone");
     if (savedPhone) {
-      setCustomerPhone(savedPhone);
+      window.queueMicrotask(() => setCustomerPhone(savedPhone));
     }
   }, []);
 
@@ -73,7 +77,7 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
     }, 60000);
 
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [getSyncedNow]);
 
   useEffect(() => {
     if (!isOrderOpen || !pickupConstraints.orderableToday || !pickupTime) {
@@ -83,7 +87,7 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
     const currentSelectedDate = timeToDate(pickupTime, now);
 
     if (currentSelectedDate && currentSelectedDate < pickupConstraints.earliestDate) {
-      setPickupTime(pickupConstraints.earliestTime);
+      window.queueMicrotask(() => setPickupTime(pickupConstraints.earliestTime));
     }
   }, [
     pickupConstraints.earliestDate,
