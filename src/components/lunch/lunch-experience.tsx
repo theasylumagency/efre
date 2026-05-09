@@ -13,10 +13,8 @@ import {
   validatePickupTime,
   type CartState,
 } from "@/lib/lunch";
-import { LunchActions } from "@/components/lunch/lunch-actions";
 import { LunchFooter } from "@/components/lunch/lunch-footer";
 import { LunchHero } from "@/components/lunch/lunch-hero";
-import { LunchInfoBar } from "@/components/lunch/lunch-info-bar";
 import { LunchList } from "@/components/lunch/lunch-list";
 import { LunchSummary } from "@/components/lunch/lunch-summary";
 import { OrderForm } from "@/components/lunch/order-form";
@@ -38,7 +36,6 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
   );
 
   const [cart, setCart] = useState<CartState>({});
-  const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [name, setName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [pickupTime, setPickupTime] = useState("");
@@ -80,7 +77,7 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
   }, [getSyncedNow]);
 
   useEffect(() => {
-    if (!isOrderOpen || !pickupConstraints.orderableToday || !pickupTime) {
+    if (!totalCount || !pickupConstraints.orderableToday || !pickupTime) {
       return;
     }
 
@@ -95,7 +92,22 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
     pickupConstraints.orderableToday,
     pickupTime,
     now,
-    isOrderOpen,
+    totalCount,
+  ]);
+
+  useEffect(() => {
+    if (!totalCount || pickupTime) {
+      return;
+    }
+
+    if (pickupConstraints.orderableToday) {
+      window.queueMicrotask(() => setPickupTime(pickupConstraints.earliestTime));
+    }
+  }, [
+    pickupConstraints.earliestTime,
+    pickupConstraints.orderableToday,
+    pickupTime,
+    totalCount,
   ]);
 
   function scrollToCards() {
@@ -126,7 +138,6 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
         delete rest[item.id];
 
         if (Object.keys(rest).length === 0) {
-          setIsOrderOpen(false);
           setFormError(null);
         }
 
@@ -165,13 +176,7 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
       return;
     }
 
-    if (!totalCount) {
-      scrollToCards();
-      return;
-    }
-
     setFormError(null);
-    setIsOrderOpen(true);
 
     if (pickupConstraints.orderableToday && !pickupTime) {
       setPickupTime(pickupConstraints.earliestTime);
@@ -185,6 +190,11 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
   async function handleSubmitOrder() {
     const currentNow = getSyncedNow();
     setNow(currentNow);
+
+    if (!selections.length) {
+      setFormError("ჯერ ერთი ლანჩი აირჩიე.");
+      return;
+    }
 
     if (!name.trim()) {
       setFormError("სახელი დაგვიტოვე, რომ შეკვეთა მარტივად ამოგიცნოთ.");
@@ -257,74 +267,85 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[960px] flex-col gap-6 px-4 py-4 pb-28 sm:px-6 sm:py-8 sm:pb-10">
-      <section className="space-y-5">
-        <LunchHero settings={data.settings} />
-        <LunchInfoBar settings={data.settings} />
-        <LunchActions
-          onBrowse={scrollToCards}
-          onPrepare={handlePrepare}
-          settings={data.settings}
-        />
+    <div className="efre-lunch">
+      <section className="efre-lunch-top">
+        <LunchHero settings={data.settings} onBrowse={scrollToCards} />
+        <section
+          aria-labelledby="how-it-works-title"
+          className="efre-lunch-flow"
+        >
+          <div className="efre-lunch-section-head">
+            <p className="efre-kicker">როგორ მუშაობს</p>
+            <h2 id="how-it-works-title">
+              სამი ნაბიჯი
+            </h2>
+          </div>
+          <div className="efre-lunch-flow__grid">
+            {[
+              ["1", "აირჩიე", "ლანჩი და რაოდენობა."],
+              ["2", "შეავსე", "სახელი, ტელეფონი და მოსვლის დრო."],
+              ["3", "გააგზავნე", "შეკვეთა აქვე ჩაიწერება."],
+            ].map(([number, title, text]) => (
+              <div className="efre-lunch-flow__step" key={number}>
+                <p>{number}</p>
+                <h3>{title}</h3>
+                <span>{text}</span>
+              </div>
+            ))}
+          </div>
+        </section>
       </section>
 
-      <LunchList
-        cart={cart}
-        items={publicItems}
-        onDecrease={handleDecrease}
-        onIncrease={handleIncrease}
-        orderingEnabled={data.settings.orderingEnabled}
-        settings={data.settings}
-      />
+      <div className="efre-lunch-order-grid">
+        <LunchList
+          cart={cart}
+          items={publicItems}
+          onDecrease={handleDecrease}
+          onIncrease={handleIncrease}
+          orderingEnabled={data.settings.orderingEnabled}
+          settings={data.settings}
+        />
 
-      {data.settings.orderingEnabled ? (
-        <section className="space-y-4">
-          <LunchSummary
-            className="hidden sm:block"
-            onContinue={handlePrepare}
-            totalCount={totalCount}
-            totalPrice={totalPrice}
-          />
-          {isOrderOpen && totalCount ? (
-            <div id="order-form" ref={orderSectionRef}>
-              <OrderForm
-                formError={formError}
-                isSubmitting={isSubmitting}
-                name={name}
-                note={note}
-                onNameChange={(value) => {
-                  setName(value);
-                  setFormError(null);
-                }}
-                customerPhone={customerPhone}
-                onCustomerPhoneChange={(value) => {
-                  setCustomerPhone(value);
-                  setFormError(null);
-                }}
-                onNoteChange={(value) => setNote(value)}
-                onPickupTimeChange={(value) => {
-                  setPickupTime(value);
-                  setFormError(null);
-                }}
-                onSubmitOrder={() => void handleSubmitOrder()}
-                phone={data.settings.phone}
-                pickupTime={pickupTime}
-                selections={selections}
-                settings={data.settings}
-                totalPrice={totalPrice}
-                validation={pickupValidation}
-              />
-            </div>
-          ) : null}
-        </section>
-      ) : null}
+        {data.settings.orderingEnabled ? (
+          <div className="efre-lunch-order-sticky" id="order-form" ref={orderSectionRef}>
+            <OrderForm
+              formError={formError}
+              isSubmitting={isSubmitting}
+              name={name}
+              note={note}
+              onNameChange={(value) => {
+                setName(value);
+                setFormError(null);
+              }}
+              customerPhone={customerPhone}
+              onCustomerPhoneChange={(value) => {
+                setCustomerPhone(value);
+                setFormError(null);
+              }}
+              onNoteChange={(value) => setNote(value)}
+              onPickupTimeChange={(value) => {
+                setPickupTime(value);
+                setFormError(null);
+              }}
+              onSubmitOrder={() => void handleSubmitOrder()}
+              phone={data.settings.phone}
+              pickupTime={pickupTime}
+              selections={selections}
+              settings={data.settings}
+              totalPrice={totalPrice}
+              validation={pickupValidation}
+            />
+          </div>
+        ) : null}
+      </div>
 
-      <section className="border border-border bg-card p-6 sm:p-8">
-        <div className="space-y-3">
-          <p className="text-xl font-extrabold tracking-[-0.05em] text-ink sm:text-2xl">
+      <section className="efre-lunch-utility">
+        <div>
+          <p className="efre-kicker">კონტაქტი</p>
+          <h2>
             {data.settings.utilityNote}
-          </p>
-          <p className="max-w-[42ch] text-base leading-7 text-muted">
+          </h2>
+          <p>
             {data.settings.secondaryUtilityNote}
           </p>
         </div>
@@ -332,7 +353,7 @@ export function LunchExperience({ data, posterPath, serverTimeMs }: LunchExperie
 
       <LunchFooter posterPath={posterPath} settings={data.settings} />
 
-      {data.settings.orderingEnabled && !isOrderOpen ? (
+      {data.settings.orderingEnabled ? (
         <LunchSummary
           floating
           onContinue={handlePrepare}

@@ -26,37 +26,46 @@ export function LunchCard({
   const remainingCount =
     item.quantityAvailable === null ? null : Math.max(item.quantityAvailable - quantity, 0);
 
+  const selected = quantity > 0;
+
   return (
-    <article className="group relative overflow-hidden border border-border bg-card-strong p-5 transition-all duration-300 hover:border-accent/60 hover:shadow-[0_0_30px_var(--color-accent-soft)] sm:p-6">
-      <div className="pointer-events-none absolute right-3 top-1 font-mono text-[4.8rem] font-black tracking-[-0.12em] text-accent/10 sm:text-[6rem]">
+    <article
+      className={`efre-lunch-card${selected ? " efre-lunch-card--selected" : ""}`}
+    >
+      <div className="efre-lunch-card__ghost-number">
         {item.number}
       </div>
-      <div className="relative flex flex-col gap-5">
-        <div className="flex gap-4">
-          <div className="min-w-16 font-mono text-[3.25rem] font-black leading-none tracking-tighter text-accent drop-shadow-[0_0_12px_var(--color-accent-soft)]">
+      <div className="efre-lunch-card__content">
+        <div className="efre-lunch-card__main">
+          <div className="efre-lunch-card__number">
             {item.number}
           </div>
-          <div className="flex-1 space-y-3">
-            <div className="flex flex-wrap items-start gap-2">
-              <h3 className="max-w-[16ch] text-2xl font-extrabold tracking-[-0.05em] text-ink drop-shadow-[0_0_2px_var(--color-border)]">
+          <div className="efre-lunch-card__copy">
+            <div className="efre-lunch-card__title-row">
+              <h3>
                 {item.title}
               </h3>
               {settings.priceMode === "perItem" && priceLabel ? (
-                <div className="inline-flex items-center border border-accent/40 bg-accent-soft px-3 py-1 font-mono text-xs font-bold text-accent shadow-[0_0_10px_var(--color-accent-soft)]">
+                <div className="efre-lunch-card__badge">
                   {priceLabel}
                 </div>
               ) : null}
               {soldOut ? (
-                <div className="inline-flex items-center border border-border bg-paper px-3 py-1 font-mono text-[0.65rem] uppercase tracking-widest text-muted">
+                <div className="efre-lunch-card__badge efre-lunch-card__badge--muted">
                   დღეს აღარ დარჩა
                 </div>
               ) : remainingCount !== null ? (
-                <div className="inline-flex items-center border border-accent/20 bg-accent-soft/30 px-3 py-1 font-mono text-[0.65rem] uppercase tracking-widest text-accent">
+                <div className="efre-lunch-card__badge">
                   დარჩა {remainingCount}
                 </div>
               ) : null}
+              {selected ? (
+                <div className="efre-lunch-card__badge efre-lunch-card__badge--selected">
+                  არჩეულია {quantity}
+                </div>
+              ) : null}
             </div>
-            <p className="max-w-[34ch] text-sm leading-6 text-muted sm:text-base">
+            <p>
               {item.composition}
             </p>
           </div>
@@ -69,9 +78,9 @@ export function LunchCard({
               აირჩიო.
             </p>
           ) : (
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm leading-6 text-muted">
-                თუ გინდა, ეს ლანჩიც ჩაგიმატებთ წინასწარ მომზადების სიაში.
+            <div className="efre-lunch-card__controls">
+              <p>
+                რაოდენობა
               </p>
               <QuantitySelector
                 canIncrease={!limitReached}

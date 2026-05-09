@@ -39,146 +39,166 @@ export function OrderForm({
   totalPrice,
   validation,
 }: OrderFormProps) {
-  if (!settings.orderingEnabled || !selections.length) {
+  const hasSelections = selections.length > 0;
+
+  if (!settings.orderingEnabled) {
     return null;
   }
 
   return (
-    <section className="border border-border bg-card p-6 sm:p-8">
-      <div className="space-y-6">
-        <div className="space-y-3">
-          <h2 className="text-2xl font-extrabold tracking-[-0.05em] text-ink sm:text-3xl">
-            თუ გინდა, წინასწარ დაგიმზადებთ
+    <section className="efre-order-panel">
+      <div className="efre-order-panel__inner">
+        <div className="efre-order-panel__head">
+          <p className="efre-kicker">შეკვეთა</p>
+          <h2>
+            შეკვეთის გაფორმება
           </h2>
-          <p className="max-w-[44ch] text-sm leading-6 text-muted sm:text-base">
-            სახელი და მოსვლის დრო დაგვიტოვე, შეკვეთა კი პირდაპირ აქვე
-            ჩაიწერება. თუ გირჩევნია, დარეკვაც შეგიძლია.
+          <p>
+            შეავსე სახელი, ტელეფონი და მოსვლის დრო. გაგზავნის შემდეგ შეკვეთის
+            სტატუსს აქვე ნახავ.
           </p>
         </div>
 
-        <div className="border border-border bg-card-strong p-4">
-          <p className="text-sm font-semibold text-ink">
-            ახლა არჩეული ლანჩებისთვის ყველაზე ადრე შეგვიძლია{" "}
-            <span className="text-accent">{validation.earliestTime}</span>-ისთვის.
-          </p>
-          <p className="mt-2 text-sm leading-6 text-muted">
-            მინიმალური მომზადების დრო: {validation.maxPrepTimeMinutes} წუთი.{" "}
-            {validation.lunchHoursRange
-              ? `ლანჩის საათები: ${validation.lunchHoursRange.start}–${validation.lunchHoursRange.end}.`
-              : `ლანჩის საათები: ${settings.lunchHours}.`}
-          </p>
-        </div>
-
-        {!validation.orderableToday ? (
-          <p className="border border-accent/30 bg-accent-soft px-4 py-3 font-mono text-[0.8rem] font-medium leading-6 text-accent shadow-[0_0_10px_var(--color-accent-soft)]">
-            {validation.availabilityMessage ??
-              "დღევანდელი წინასწარი შეკვეთა ამ დროისთვის ვეღარ ესწრება. შეგიძლია პირდაპირ მოხვიდე ან დაგვირეკო."}
-          </p>
-        ) : null}
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="space-y-2">
-            <span className="text-sm font-semibold text-ink">სახელი</span>
-            <input
-              className="min-h-12 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
-              onChange={(event) => onNameChange(event.target.value)}
-              placeholder="მაგ: ნინო"
-              type="text"
-              value={name}
-            />
-          </label>
-          <label className="space-y-2">
-            <span className="text-sm font-semibold text-ink">ტელეფონის ნომერი</span>
-            <input
-              className="min-h-12 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
-              onChange={(event) => onCustomerPhoneChange(event.target.value)}
-              placeholder="მაგ: 555 12 34 56"
-              type="tel"
-              value={customerPhone}
-            />
-            <p className="text-[0.8rem] text-muted leading-relaxed">
-              დაზუსტების აუცილებლობის შემთხვევაში ამ ნომერზე დაგიკავშირდებით.
+        {!hasSelections ? (
+          <div className="efre-order-empty">
+            <p>
+              ჯერ აირჩიე ლანჩი ზემოთ — შემდეგ აქ შეავსებ სახელს, ტელეფონს და
+              მოსვლის დროს.
             </p>
-          </label>
-          <label className="space-y-2">
-            <span className="text-sm font-semibold text-ink">მოსვლის დრო</span>
-            <input
-              className="min-h-12 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
-              max={validation.lunchHoursRange?.end}
-              min={validation.lunchHoursRange?.start}
-              onChange={(event) => onPickupTimeChange(event.target.value)}
-              step={60}
-              type="time"
-              value={pickupTime}
-            />
-          </label>
-        </div>
-
-        <label className="space-y-2">
-          <span className="text-sm font-semibold text-ink">
-            შენიშვნა თუ გაქვს
-          </span>
-          <textarea
-            className="min-h-28 w-full border border-border bg-paper px-4 py-3 text-sm text-ink outline-none transition-all focus:border-accent focus:shadow-[0_0_0_1px_var(--color-accent)]"
-            onChange={(event) => onNoteChange(event.target.value)}
-            placeholder="მაგ: მოვალ ზუსტად 14:29-ზე"
-            value={note}
-          />
-        </label>
-
-        <div className="border border-border bg-card-strong p-4">
-          <div className="space-y-3">
-            <p className="text-sm font-semibold text-ink">შენი არჩევანი</p>
-            <div className="space-y-2">
-              {selections.map((selection) => (
-                <div
-                  className="flex items-center justify-between gap-3 text-sm text-ink"
-                  key={selection.item.id}
-                >
-                  <span>
-                    {selection.item.number} ×{selection.quantity} —{" "}
-                    {selection.item.title}
-                  </span>
-                  <span className="whitespace-nowrap font-mono font-bold text-muted">
-                    {formatPrice(selection.lineTotal)}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center justify-between gap-3 border-t border-border pt-3 text-sm font-semibold text-ink">
-              <span>ჯამი</span>
-              <span className="font-mono">{formatPrice(totalPrice) ?? "ფასი დასაზუსტებელია"}</span>
-            </div>
+            <button
+              className="efre-order-empty__button"
+              disabled
+              type="button"
+            >
+              ჯერ აირჩიე ლანჩი
+            </button>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="efre-order-note">
+              <p>
+                ყველაზე ადრე შეგვიძლია{" "}
+                <strong>{validation.earliestTime}</strong>
+                -ისთვის.
+              </p>
+              <span>
+                მინიმალური მომზადების დრო: {validation.maxPrepTimeMinutes} წუთი.{" "}
+                {validation.lunchHoursRange
+                  ? `ლანჩის საათები: ${validation.lunchHoursRange.start}–${validation.lunchHoursRange.end}.`
+                  : `ლანჩის საათები: ${settings.lunchHours}.`}
+              </span>
+            </div>
+
+            {!validation.orderableToday ? (
+              <p className="efre-order-error">
+                {validation.availabilityMessage ??
+                  "დღევანდელი წინასწარი შეკვეთა ამ დროისთვის ვეღარ ესწრება. შეგიძლია პირდაპირ მოხვიდე ან დაგვირეკო."}
+              </p>
+            ) : null}
+
+            <div className="efre-order-fields">
+              <label className="efre-field">
+                <span>სახელი</span>
+                <input
+                  className="efre-input"
+                  onChange={(event) => onNameChange(event.target.value)}
+                  placeholder="მაგ: ნინო"
+                  type="text"
+                  value={name}
+                />
+              </label>
+              <label className="efre-field">
+                <span>
+                  ტელეფონის ნომერი
+                </span>
+                <input
+                  className="efre-input"
+                  onChange={(event) => onCustomerPhoneChange(event.target.value)}
+                  placeholder="მაგ: 555 12 34 56"
+                  type="tel"
+                  value={customerPhone}
+                />
+              </label>
+              <label className="efre-field">
+                <span>მოსვლის დრო</span>
+                <input
+                  className="efre-input"
+                  max={validation.lunchHoursRange?.end}
+                  min={validation.lunchHoursRange?.start}
+                  onChange={(event) => onPickupTimeChange(event.target.value)}
+                  step={60}
+                  type="time"
+                  value={pickupTime}
+                />
+              </label>
+            </div>
+
+            <label className="efre-field">
+              <span>
+                შენიშვნა თუ გაქვს
+              </span>
+              <textarea
+                className="efre-input efre-input--textarea"
+                onChange={(event) => onNoteChange(event.target.value)}
+                placeholder="მაგ: წამოვიღებ ზუსტად 14:30-ზე"
+                value={note}
+              />
+            </label>
+
+            <div className="efre-order-lines">
+              <div>
+                <p>შენი შეკვეთა</p>
+                <div className="efre-order-lines__items">
+                  {selections.map((selection) => (
+                    <div
+                      className="efre-order-line"
+                      key={selection.item.id}
+                    >
+                      <span>
+                        {selection.item.number} ×{selection.quantity} —{" "}
+                        {selection.item.title}
+                      </span>
+                      <strong>
+                        {formatPrice(selection.lineTotal)}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+                <div className="efre-order-total">
+                  <span>ჯამი</span>
+                  <strong>
+                    {formatPrice(totalPrice) ?? "ფასი დასაზუსტებელია"}
+                  </strong>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
         {formError ? (
-          <p className="border border-accent/30 bg-accent-soft px-4 py-3 font-mono text-[0.8rem] font-medium text-accent">
+          <p className="efre-order-error">
             {formError}
           </p>
         ) : null}
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <button
-            className="inline-flex min-h-12 items-center justify-center border border-transparent bg-accent px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-background transition-all duration-200 hover:bg-accent/90 hover:shadow-[0_0_15px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-55"
-            disabled={isSubmitting}
-            onClick={onSubmitOrder}
-            type="button"
-          >
-            {isSubmitting ? "იგზავნება..." : "წინასწარ მომიმზადეთ"}
-          </button>
-          <a
-            className="inline-flex min-h-12 items-center justify-center border border-border bg-card-strong px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-ink transition-all duration-200 hover:border-accent hover:text-accent hover:shadow-[0_0_10px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
-            href={createTelHref(phone)}
-          >
-            დარეკე
-          </a>
-        </div>
-
-        <p className="text-sm leading-6 text-muted">
-          გაგზავნის შემდეგ შეკვეთის სტატუსს აქვე ნახავ. თუ დღეს უბრალოდ შემოვლა
-          გირჩევნია, ეგეც სრულიად ნორმალურია.
-        </p>
+        {hasSelections ? (
+          <div className="efre-order-actions">
+            <button
+              className="efre-button efre-button--accent"
+              disabled={isSubmitting}
+              onClick={onSubmitOrder}
+              type="button"
+            >
+              {isSubmitting ? "იგზავნება..." : "შეკვეთის გაგზავნა"}
+            </button>
+            <a
+              className="efre-button efre-button--secondary"
+              href={createTelHref(phone)}
+            >
+              დარეკვა
+            </a>
+          </div>
+        ) : null}
       </div>
     </section>
   );

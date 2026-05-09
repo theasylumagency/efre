@@ -32,7 +32,7 @@ export default async function LunchPage() {
   const data = await readLunchData();
 
   return (
-    <main className="flex-1">
+    <main className="efre-lunch-page flex-1">
       <LunchExperience data={data} posterPath={lunchPaths.poster} serverTimeMs={Number(new Date())} />
     </main>
   );

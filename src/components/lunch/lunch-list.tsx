@@ -20,22 +20,20 @@ export function LunchList({
   onIncrease,
 }: LunchListProps) {
   return (
-    <section className="space-y-4" aria-labelledby="lunch-list-title" id="lunch-list">
-      <div className="space-y-2 px-1">
-        <h2
-          className="text-2xl font-extrabold tracking-[-0.05em] text-ink sm:text-3xl"
-          id="lunch-list-title"
-        >
-          9 სწრაფი არჩევანი
+    <section className="efre-lunch-list" aria-labelledby="lunch-list-title" id="lunch-list">
+      <div className="efre-lunch-section-head">
+        <p className="efre-kicker">არჩევა</p>
+        <h2 id="lunch-list-title">
+          აირჩიე ლანჩი
         </h2>
-        <p className="max-w-[34ch] text-sm leading-6 text-muted sm:text-base">
-          ყველაფერი ერთ ეკრანზეა: კერძი, თანხლება, ფასი და სურვილის შემთხვევაში
-          წინასწარი მომზადებაც.
+        <p>
+          დააჭირე + სასურველ ლანჩს. შეკვეთის დეტალები გვერდით ან ქვემოთ
+          გამოჩნდება.
         </p>
       </div>
 
       {items.length ? (
-        <div className="space-y-4">
+        <div className="efre-lunch-card-list">
           {items.map((item) => (
             <LunchCard
               item={item}
@@ -49,7 +47,7 @@ export function LunchList({
           ))}
         </div>
       ) : (
-        <div className="border border-border bg-card p-6 text-sm leading-6 text-muted">
+        <div className="efre-lunch-empty-list">
           დღეს აქტიური ლანჩები დროებით არ ჩანს. შეგიძლია მოგვიანებით გადაამოწმო
           ან დაგვირეკო.
         </div>

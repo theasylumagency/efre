@@ -20,30 +20,30 @@ export function LunchSummary({
   }
 
   const containerClassName = floating
-    ? "fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 sm:hidden"
-    : "";
+    ? "efre-lunch-summary efre-lunch-summary--floating"
+    : "efre-lunch-summary";
 
   return (
     <div className={`${containerClassName} ${className}`.trim()}>
-      <section className="border border-border bg-ink p-4 text-paper">
-        <div className="flex items-center justify-between gap-4">
-          <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-paper/70">
-              შერჩევა
+      <section className="efre-lunch-summary__panel">
+        <div className="efre-lunch-summary__inner">
+          <div>
+            <p>
+              შენი შეკვეთა
             </p>
-            <p className="font-mono text-xl font-bold tracking-tight">
-              {totalCount} პორცია
-            </p>
-            <p className="text-sm text-paper/70">
+            <strong>
+              არჩეულია {totalCount} ლანჩი
+            </strong>
+            <span>
               {formatPrice(totalPrice) ?? "ფასი დასაზუსტებელია"}
-            </p>
+            </span>
           </div>
           <button
-            className="inline-flex min-h-12 shrink-0 items-center justify-center border border-transparent bg-paper px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider text-ink transition-all duration-200 hover:border-accent hover:bg-accent hover:text-background hover:shadow-[0_0_15px_var(--color-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            className="efre-button efre-button--paper"
             onClick={onContinue}
             type="button"
           >
-            გაგრძელება
+            შეკვეთის გაფორმება
           </button>
         </div>
       </section>

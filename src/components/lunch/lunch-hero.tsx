@@ -1,42 +1,71 @@
 import type { LunchSettings } from "@/data/lunch";
+import { createTelHref, getCommonPriceLine } from "@/lib/lunch";
 
 type LunchHeroProps = {
   settings: Pick<
     LunchSettings,
-    "eyebrow" | "pageTitle" | "subtitle" | "introLines" | "quietNote"
+    | "commonPrice"
+    | "lunchHours"
+    | "orderingEnabled"
+    | "phone"
+    | "priceMode"
   >;
+  onBrowse: () => void;
 };
 
-export function LunchHero({ settings }: LunchHeroProps) {
+export function LunchHero({ settings, onBrowse }: LunchHeroProps) {
   return (
-    <header className="relative overflow-hidden border border-border bg-card p-6 backdrop-blur sm:p-8">
-      <div className="pointer-events-none absolute -right-10 -top-14 h-36 w-36 rounded-full bg-accent-soft blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-10 left-8 h-24 w-24 rounded-full bg-paper-strong blur-3xl" />
-      <div className="relative flex flex-col gap-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="inline-flex w-fit items-center border border-accent/30 bg-accent-soft px-3 py-1 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-accent shadow-[0_0_10px_var(--color-accent-soft)]">
-            {settings.eyebrow}
-          </div>
-          <img src="/logo.svg" alt="Efre Logo" className="h-10 w-auto max-sm:h-15 lg:h-20 xl:h-25 absolute right-0 top-0 opacity-90 drop-shadow-[0_0_8px_var(--color-accent-soft)]" />
+    <header className="efre-lunch-hero">
+      <div className="efre-lunch-hero__inner">
+        <div className="efre-lunch-hero__top">
+          <p className="efre-kicker">ლანჩი</p>
+          <span className="efre-wordmark">ეფრე</span>
         </div>
-        <div className="space-y-4">
-          <div className="space-y-3">
-            <h1 className="max-w-[12ch] text-[2.7rem] font-extrabold tracking-[-0.07em] text-ink sm:text-[3.6rem]">
-              {settings.pageTitle}
+
+        <div className="efre-lunch-hero__body">
+          <div className="efre-lunch-hero__copy">
+            <h1>
+              ლანჩი, რომელიც ოფისს არ ჰგავს
             </h1>
-            <p className="max-w-[30ch] text-base font-medium leading-7 text-muted sm:text-lg">
-              {settings.subtitle}
+            <p>
+              აირჩიე ლანჩი, მიუთითე რაოდენობა, შეავსე სახელი, ტელეფონი და
+              მოსვლის დრო — შეკვეთა აქვე გაიგზავნება.
             </p>
           </div>
-          <div className="space-y-2 text-base leading-7 text-ink sm:text-lg">
-            {settings.introLines.map((line) => (
-              <p key={line}>{line}</p>
-            ))}
+
+          <div className="efre-lunch-hero__facts">
+            <p>
+              სწრაფი ინფორმაცია
+            </p>
+            <strong>
+              {settings.lunchHours}
+            </strong>
+            <strong>
+              {getCommonPriceLine(settings) ?? "ფასი ბარათზეა"}
+            </strong>
+            {settings.orderingEnabled ? (
+              <span>
+                წინასწარ მომზადება შესაძლებელია
+              </span>
+            ) : null}
           </div>
         </div>
-        <p className="max-w-[42ch] text-sm font-medium italic leading-6 text-muted">
-          {settings.quietNote}
-        </p>
+
+        <div className="efre-lunch-hero__actions">
+          <button
+            className="efre-button efre-button--accent"
+            onClick={onBrowse}
+            type="button"
+          >
+            ლანჩის არჩევა
+          </button>
+          <a
+            className="efre-button efre-button--paper"
+            href={createTelHref(settings.phone)}
+          >
+            დარეკვა
+          </a>
+        </div>
       </div>
     </header>
   );
