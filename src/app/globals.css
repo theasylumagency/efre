@@ -160,12 +160,24 @@ body::before {
 }
 
 .efre-lunch {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 1.35rem;
-  margin: 0 auto;
+  margin: 0 1rem;
   max-width: 74rem;
-  padding: 1rem 1rem 7rem;
+  padding: 1rem 0 7rem;
+}
+
+.efre-lunch > *,
+.efre-lunch-hero,
+.efre-lunch-flow,
+.efre-lunch-utility,
+.efre-lunch-footer,
+.efre-lunch-card,
+.efre-order-panel {
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .efre-lunch-top {
@@ -845,6 +857,28 @@ body::before {
   padding: 0.72rem 0.8rem;
 }
 
+@media (max-width: 520px) {
+  .efre-lunch-hero__top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .efre-lunch-hero .efre-wordmark {
+    display: none;
+  }
+
+  .efre-lunch-hero__copy,
+  .efre-lunch-hero__copy p,
+  .efre-lunch-hero__facts,
+  .efre-lunch-hero__actions {
+    max-width: calc(100vw - 5rem);
+  }
+
+  .efre-lunch-hero__copy h1 {
+    font-size: 2.22rem;
+    max-width: min(10.5ch, calc(100vw - 5rem));
+  }
+}
+
 .efre-lunch-footer {
   background:
     linear-gradient(90deg, rgba(31, 29, 26, 0.08) 0 1px, transparent 1px),
@@ -924,7 +958,8 @@ body::before {
 @media (min-width: 640px) {
   .efre-lunch {
     gap: 1.6rem;
-    padding: 2rem 1.5rem 3rem;
+    margin: 0 1.5rem;
+    padding: 2rem 0 3rem;
   }
 
   .efre-lunch-hero {
@@ -1002,6 +1037,13 @@ body::before {
 
   .efre-order-fields {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1232px) {
+  .efre-lunch {
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
