@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { isAdminAuthenticated, isAdminProtectionEnabled } from "@/lib/admin-auth";
+import { kanchiDataFilePath, readKanchiData } from "@/lib/kanchi-store";
 import { lunchDataFilePath, readLunchData } from "@/lib/lunch-store";
 import { AdminEditor } from "@/components/admin/admin-editor";
 import { AdminLoginForm } from "@/components/admin/admin-login-form";
@@ -27,12 +28,15 @@ export default async function AdminPage() {
   }
 
   const data = await readLunchData();
+  const kanchiData = await readKanchiData();
 
   return (
     <main className="flex-1">
       <AdminEditor
+        initialKanchiData={kanchiData}
         initialData={data}
         isProtected={isProtected}
+        kanchiStoragePath={kanchiDataFilePath}
         storagePath={lunchDataFilePath}
       />
     </main>

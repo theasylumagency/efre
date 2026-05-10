@@ -42,6 +42,16 @@ export type CreateLunchOrderInput = {
   pickupTime: string;
   note?: string;
   items: LunchOrderItemInput[];
+  source?: string;
+  productType?: string;
+  productName?: string;
+  name?: string;
+  phone?: string;
+  fulfillmentType?: string;
+  addressOrDistrict?: string;
+  desiredTime?: string;
+  comment?: string;
+  timestamp?: string;
 };
 
 export function getOrderStatusLabel(status: OrderStatus) {

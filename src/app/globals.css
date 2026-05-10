@@ -125,13 +125,11 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       rgba(31, 29, 26, 0.04) 0,
       rgba(31, 29, 26, 0.04) 1px,
       transparent 1px,
-      transparent 9px
-    ),
+      transparent 9px),
     linear-gradient(rgba(31, 29, 26, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(31, 29, 26, 0.03) 1px, transparent 1px),
     #eae1d3;
@@ -169,7 +167,7 @@ body::before {
   padding: 1rem 0 7rem;
 }
 
-.efre-lunch > *,
+.efre-lunch>*,
 .efre-lunch-hero,
 .efre-lunch-flow,
 .efre-lunch-utility,
@@ -1053,6 +1051,435 @@ body::before {
   }
 }
 
+.efre-kanchi {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin: 0 1rem;
+  max-width: 74rem;
+  padding: 1rem 0 4rem;
+}
+
+.efre-kanchi-hero {
+  background:
+    linear-gradient(90deg, rgba(107, 46, 46, 0.32) 0 0.45rem, transparent 0.45rem),
+    linear-gradient(135deg, rgba(68, 81, 72, 0.34), transparent 42%),
+    var(--efre-charcoal);
+  border: 1px solid var(--efre-charcoal);
+  box-shadow: 10px 10px 0 rgba(31, 29, 26, 0.14);
+  color: var(--efre-paper);
+  display: grid;
+  gap: 1rem;
+  overflow: hidden;
+  padding: 1rem;
+  position: relative;
+}
+
+.efre-kanchi-hero::before {
+  border: 1px solid rgba(234, 225, 211, 0.18);
+  content: "";
+  inset: 0.7rem;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.efre-kanchi-hero__media {
+  aspect-ratio: 1 / 0.82;
+  background: var(--efre-green);
+  border: 1px solid rgba(234, 225, 211, 0.34);
+  min-height: 17rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.efre-kanchi-hero__media::after {
+  background:
+    linear-gradient(180deg, transparent 45%, rgba(31, 29, 26, 0.4)),
+    repeating-linear-gradient(0deg,
+      rgba(234, 225, 211, 0.08) 0,
+      rgba(234, 225, 211, 0.08) 1px,
+      transparent 1px,
+      transparent 12px);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.efre-kanchi-hero__media img {
+  filter: saturate(0.96) contrast(1.04);
+  object-fit: cover;
+}
+
+.efre-kanchi-hero__copy {
+  display: grid;
+  gap: 0.9rem;
+  min-width: 0;
+  padding: 0.35rem 0.35rem 1rem;
+  position: relative;
+  z-index: 3;
+}
+
+.efre-kanchi-hero__copy h1 {
+  color: var(--efre-paper);
+  font-size: 2.45rem;
+  font-weight: 720;
+  letter-spacing: 0;
+  line-height: 1.05;
+  margin: 0;
+  max-width: 11ch;
+  overflow-wrap: anywhere;
+}
+
+.efre-kanchi-hero__subtitle {
+  color: var(--efre-paper);
+  font-size: 1.18rem;
+  font-weight: 700;
+  line-height: 1.48;
+  margin: 0;
+  max-width: 26rem;
+}
+
+.efre-kanchi-hero__text {
+  color: rgba(234, 225, 211, 0.82);
+  font-size: 1rem;
+  line-height: 1.75;
+  margin: 0;
+  max-width: 34rem;
+}
+
+.efre-kanchi-hero__actions {
+  display: grid;
+  gap: 0.72rem;
+  margin-top: 0.2rem;
+}
+
+.efre-kanchi-hero__actions .efre-button {
+  width: 100%;
+}
+
+.efre-kanchi-hero__actions span {
+  border: 1px solid rgba(234, 225, 211, 0.28);
+  color: rgba(234, 225, 211, 0.78);
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 650;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.efre-kanchi-flow,
+.efre-kanchi-products {
+  background:
+    linear-gradient(90deg, rgba(31, 29, 26, 0.08) 0 1px, transparent 1px),
+    rgba(234, 225, 211, 0.76);
+  background-size: 4.5rem 100%, auto;
+  border: 1px solid var(--efre-charcoal);
+  box-shadow: 5px 5px 0 rgba(31, 29, 26, 0.1);
+  color: var(--efre-charcoal);
+  padding: 1rem;
+}
+
+.efre-kanchi-flow__grid,
+.efre-kanchi-product-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.efre-kanchi-order-grid {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.efre-kanchi-product {
+  align-items: start;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 42%),
+    var(--efre-paper-dark);
+  border: 1px solid var(--efre-charcoal);
+  box-shadow: 5px 5px 0 rgba(31, 29, 26, 0.11);
+  cursor: pointer;
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 1rem;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.efre-kanchi-product:hover,
+.efre-kanchi-product--selected {
+  border-color: var(--efre-wine);
+  box-shadow: 7px 7px 0 rgba(107, 46, 46, 0.18);
+  transform: translate(-1px, -1px);
+}
+
+.efre-kanchi-product--selected {
+  background:
+    linear-gradient(90deg, rgba(107, 46, 46, 0.12) 0 0.45rem, transparent 0.45rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 42%),
+    #dfd0bd;
+}
+
+.efre-kanchi-product input {
+  height: 1px;
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.efre-kanchi-product__mark {
+  border: 1px solid var(--efre-charcoal);
+  display: inline-flex;
+  height: 1.35rem;
+  margin-top: 0.1rem;
+  width: 1.35rem;
+}
+
+.efre-kanchi-product--selected .efre-kanchi-product__mark {
+  background: var(--efre-wine);
+  box-shadow: inset 0 0 0 0.32rem var(--efre-paper-dark);
+}
+
+.efre-kanchi-product__body {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.efre-kanchi-product__top {
+  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.efre-kanchi-product__top strong {
+  color: var(--efre-charcoal);
+  font-size: 1.35rem;
+  font-weight: 720;
+  line-height: 1.22;
+}
+
+.efre-kanchi-product__top em {
+  border: 1px solid rgba(107, 46, 46, 0.32);
+  color: var(--efre-wine);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 720;
+  line-height: 1.1;
+  padding: 0.42rem 0.52rem;
+}
+
+.efre-kanchi-product__body>span:not(.efre-kanchi-product__top),
+.efre-kanchi-product__body small {
+  color: rgba(31, 29, 26, 0.74);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.efre-kanchi-product__price {
+  color: var(--efre-wine);
+  font-family: var(--font-space-mono), monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  grid-column: 2;
+}
+
+.efre-kanchi-form-panel {
+  scroll-margin-top: 1rem;
+}
+
+.efre-kanchi-selected,
+.efre-kanchi-success,
+.efre-kanchi-call-note {
+  background: rgba(234, 225, 211, 0.92);
+  border: 1px solid rgba(234, 225, 211, 0.7);
+  color: var(--efre-charcoal);
+  padding: 1rem;
+}
+
+.efre-kanchi-selected span,
+.efre-kanchi-selected p {
+  color: rgba(31, 29, 26, 0.68);
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.efre-kanchi-selected strong {
+  display: block;
+  font-size: 1.28rem;
+  font-weight: 720;
+  line-height: 1.25;
+  margin-top: 0.35rem;
+}
+
+.efre-kanchi-selected p {
+  color: var(--efre-wine);
+  font-family: var(--font-space-mono), monospace;
+  margin-top: 0.45rem;
+}
+
+.efre-kanchi-segment {
+  border: 0;
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0;
+}
+
+.efre-kanchi-segment legend {
+  color: rgba(234, 225, 211, 0.88);
+  font-size: 0.9rem;
+  font-weight: 650;
+  margin-bottom: 0.45rem;
+  padding: 0;
+}
+
+.efre-kanchi-segment label {
+  cursor: pointer;
+  display: grid;
+}
+
+.efre-kanchi-segment input {
+  height: 1px;
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.efre-kanchi-segment span {
+  align-items: center;
+  background: rgba(234, 225, 211, 0.1);
+  border: 1px solid rgba(234, 225, 211, 0.45);
+  color: var(--efre-paper);
+  display: inline-flex;
+  font-weight: 720;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+}
+
+.efre-kanchi-segment input:checked+span {
+  background: var(--efre-paper);
+  color: var(--efre-charcoal);
+}
+
+.efre-field small {
+  color: rgba(234, 225, 211, 0.7);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.efre-kanchi-call-note {
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.efre-kanchi-success h3 {
+  font-size: 1.45rem;
+  font-weight: 720;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.efre-kanchi-success p {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.6;
+  margin: 0.7rem 0 0;
+}
+
+.efre-kanchi-success span {
+  color: rgba(31, 29, 26, 0.72);
+  display: block;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  margin-top: 0.5rem;
+}
+
+.efre-kanchi-form-panel .efre-button {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .efre-kanchi {
+    gap: 1.4rem;
+    margin: 0 1.5rem;
+    padding: 2rem 0 4rem;
+  }
+
+  .efre-kanchi-hero,
+  .efre-kanchi-flow,
+  .efre-kanchi-products {
+    padding: 1.35rem;
+  }
+
+  .efre-kanchi-hero__copy h1 {
+    font-size: 3.35rem;
+  }
+
+  .efre-kanchi-hero__actions,
+  .efre-kanchi-segment {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .efre-kanchi-hero__actions .efre-button {
+    width: auto;
+  }
+
+  .efre-kanchi-flow__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .efre-kanchi-hero {
+    align-items: stretch;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    min-height: 35rem;
+  }
+
+  .efre-kanchi-hero__media {
+    aspect-ratio: auto;
+    min-height: 100%;
+  }
+
+  .efre-kanchi-hero__copy {
+    align-content: center;
+    padding: 2rem 1rem 2rem 0.5rem;
+  }
+
+  .efre-kanchi-hero__copy h1 {
+    font-size: 4.55rem;
+  }
+
+  .efre-kanchi-order-grid {
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr) minmax(21.25rem, 0.42fr);
+  }
+
+  .efre-kanchi-form-panel {
+    position: sticky;
+    top: 1.5rem;
+  }
+}
+
+@media (min-width: 1232px) {
+  .efre-kanchi {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 .efre-home::before {
   content: "";
   position: fixed;
@@ -1061,20 +1488,16 @@ body::before {
   pointer-events: none;
   opacity: 0.34;
   background:
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       rgba(31, 29, 26, 0.04) 0,
       rgba(31, 29, 26, 0.04) 1px,
       transparent 1px,
-      transparent 9px
-    ),
-    repeating-linear-gradient(
-      90deg,
+      transparent 9px),
+    repeating-linear-gradient(90deg,
       rgba(255, 255, 255, 0.18) 0,
       rgba(255, 255, 255, 0.18) 1px,
       transparent 1px,
-      transparent 13px
-    );
+      transparent 13px);
   mix-blend-mode: multiply;
 }
 
@@ -1182,13 +1605,11 @@ body::before {
   pointer-events: none;
   position: absolute;
   background:
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       rgba(234, 225, 211, 0.12) 0,
       rgba(234, 225, 211, 0.12) 1px,
       transparent 1px,
-      transparent 18px
-    ),
+      transparent 18px),
     linear-gradient(90deg, rgba(178, 138, 71, 0.2), transparent 36%);
 }
 
@@ -1411,7 +1832,7 @@ body::before {
   position: absolute;
 }
 
-.efre-lunchbox__panel > * {
+.efre-lunchbox__panel>* {
   position: relative;
 }
 
@@ -1571,13 +1992,11 @@ body::before {
 .efre-gallery-card::after {
   background:
     linear-gradient(180deg, transparent 42%, rgba(31, 29, 26, 0.9)),
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       rgba(234, 225, 211, 0.06) 0,
       rgba(234, 225, 211, 0.06) 1px,
       transparent 1px,
-      transparent 10px
-    );
+      transparent 10px);
   content: "";
   inset: 0;
   position: absolute;
@@ -1684,10 +2103,33 @@ body::before {
   position: relative;
 }
 
+.efre-story__panel__left {
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.efre-story__panel__right {
+  display: none;
+  position: relative;
+  z-index: 1;
+}
+
+.efre-story__panel__right img {
+  border: 1px solid rgba(234, 225, 211, 0.34);
+  display: block;
+  filter: saturate(0.9) contrast(1.04);
+  height: 100%;
+  min-height: 14rem;
+  object-fit: cover;
+  width: 100%;
+}
+
 .efre-story__panel::after {
   border: 1px solid rgba(234, 225, 211, 0.2);
   bottom: 1rem;
   content: "";
+  display: none;
   pointer-events: none;
   position: absolute;
   right: 1rem;
@@ -1815,7 +2257,7 @@ body::before {
   width: 3rem;
 }
 
-.efre-final-cta > * {
+.efre-final-cta>* {
   margin-left: auto;
   margin-right: auto;
   max-width: 68rem;
@@ -1910,6 +2352,21 @@ body::before {
     aspect-ratio: 4 / 4.65;
   }
 
+  .efre-story__panel {
+    align-items: stretch;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 25%);
+  }
+
+  .efre-story__panel__right {
+    display: block;
+  }
+
+  .efre-story__panel::after {
+    display: block;
+  }
+
   .efre-contact {
     grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
   }
@@ -1978,7 +2435,7 @@ body::before {
     grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   }
 
-  .efre-lunchbox__panel > div {
+  .efre-lunchbox__panel>div {
     grid-row: 1 / span 3;
   }
 
@@ -2028,6 +2485,7 @@ code {
 }
 
 @media print {
+
   html,
   body {
     background: white;

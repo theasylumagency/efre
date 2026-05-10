@@ -2,13 +2,17 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
+import type { KanchiData, KanchiProduct } from "@/data/kanchi";
 import { lunchPaths, sortLunchItems, type LunchData, type LunchItem, type LunchSettings } from "@/data/lunch";
+import { AdminKanchiForm } from "@/components/admin/admin-kanchi-form";
 import { AdminLunchItemsForm } from "@/components/admin/admin-lunch-items-form";
 import { AdminSettingsForm } from "@/components/admin/admin-settings-form";
 
 type AdminEditorProps = {
   initialData: LunchData;
+  initialKanchiData: KanchiData;
   isProtected: boolean;
+  kanchiStoragePath: string;
   storagePath: string;
 };
 
@@ -35,10 +39,13 @@ function createNewLunchItem(existingItems: LunchItem[], settings: LunchSettings)
 
 export function AdminEditor({
   initialData,
+  initialKanchiData,
   isProtected,
+  kanchiStoragePath,
   storagePath,
 }: AdminEditorProps) {
   const [draft, setDraft] = useState(initialData);
+  const [kanchiDraft, setKanchiDraft] = useState(initialKanchiData);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fallbackJson, setFallbackJson] = useState<string | null>(null);
@@ -95,13 +102,31 @@ export function AdminEditor({
     }));
   }
 
+  function updateKanchiProduct<Key extends keyof KanchiProduct>(
+    productId: KanchiProduct["id"],
+    key: Key,
+    value: KanchiProduct[Key],
+  ) {
+    setKanchiDraft((previousDraft) => ({
+      ...previousDraft,
+      products: previousDraft.products.map((product) =>
+        product.id === productId
+          ? {
+              ...product,
+              [key]: value,
+            }
+          : product,
+      ),
+    }));
+  }
+
   function handleSave() {
     setStatusMessage(null);
     setErrorMessage(null);
     setFallbackJson(null);
 
     startSaveTransition(async () => {
-      const response = await fetch("/api/admin/lunch", {
+      const lunchResponse = await fetch("/api/admin/lunch", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -109,18 +134,18 @@ export function AdminEditor({
         body: JSON.stringify(draft),
       });
 
-      const result = (await response.json()) as {
+      const lunchResult = (await lunchResponse.json()) as {
         code?: string;
         data?: LunchData;
         message?: string;
         ok?: boolean;
       };
 
-      if (!response.ok || !result.ok || !result.data) {
-        setErrorMessage(result.message ?? "შენახვა ვერ შესრულდა.");
+      if (!lunchResponse.ok || !lunchResult.ok || !lunchResult.data) {
+        setErrorMessage(lunchResult.message ?? "შენახვა ვერ შესრულდა.");
 
-        if (result.data) {
-          setFallbackJson(`${JSON.stringify(result.data, null, 2)}\n`);
+        if (lunchResult.data) {
+          setFallbackJson(`${JSON.stringify(lunchResult.data, null, 2)}\n`);
         } else {
           setFallbackJson(`${JSON.stringify(draft, null, 2)}\n`);
         }
@@ -128,7 +153,35 @@ export function AdminEditor({
         return;
       }
 
-      setDraft(result.data);
+      const kanchiResponse = await fetch("/api/admin/kanchi", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(kanchiDraft),
+      });
+
+      const kanchiResult = (await kanchiResponse.json()) as {
+        code?: string;
+        data?: KanchiData;
+        message?: string;
+        ok?: boolean;
+      };
+
+      if (!kanchiResponse.ok || !kanchiResult.ok || !kanchiResult.data) {
+        setErrorMessage(kanchiResult.message ?? "კანჭის ფასების შენახვა ვერ შესრულდა.");
+
+        if (kanchiResult.data) {
+          setFallbackJson(`${JSON.stringify(kanchiResult.data, null, 2)}\n`);
+        } else {
+          setFallbackJson(`${JSON.stringify(kanchiDraft, null, 2)}\n`);
+        }
+
+        return;
+      }
+
+      setDraft(lunchResult.data);
+      setKanchiDraft(kanchiResult.data);
       setStatusMessage("ცვლილებები შენახულია.");
     });
   }
@@ -156,9 +209,9 @@ export function AdminEditor({
                 Business Lunch Admin
               </h1>
               <p className="max-w-[52ch] text-sm leading-6 text-muted sm:text-base">
-                ცვლილებები ინახება ფაილში <code>{storagePath}</code>. თუ deploy-ის
-                გარემო read-only არის, შენახვა შეიძლება ვერ გამყარდეს და ამ გვერდზე
-                JSON export გამოჩნდეს ხელით გადასატანად.
+                ცვლილებები ინახება ფაილებში <code>{storagePath}</code> და{" "}
+                <code>{kanchiStoragePath}</code>. თუ deploy-ის გარემო read-only
+                არის, JSON export გამოჩნდება ხელით გადასატანად.
               </p>
             </div>
           </div>
@@ -205,6 +258,10 @@ export function AdminEditor({
         onChangeItem={updateItem}
         onRemoveItem={removeItem}
         priceMode={draft.settings.priceMode}
+      />
+      <AdminKanchiForm
+        data={kanchiDraft}
+        onChangeProduct={updateKanchiProduct}
       />
 
       <section className="rounded-[28px] border border-border bg-card p-5 shadow-[0_18px_70px_-58px_rgba(34,31,29,0.45)] sm:p-6">

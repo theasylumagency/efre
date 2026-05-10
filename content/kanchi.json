@@ -1,0 +1,26 @@
+{
+  "products": [
+    {
+      "id": "large",
+      "orderItemId": "kanchi-large",
+      "number": "K2",
+      "title": "კანჭის დიდი დაფა",
+      "badge": "საუკეთესოა კომპანიისთვის",
+      "description": "კანჭი, 2 მწყერი, ძეხვეული, კარტოფილი, მწნილი, წიწაკა, სალათი და სოუსები.",
+      "helper": "სერიოზული არჩევანი მხოლოდ სერიოზული კამპანიისთვის.",
+      "price": 112,
+      "minPrepTimeMinutes": 60
+    },
+    {
+      "id": "small",
+      "orderItemId": "kanchi-small",
+      "number": "K1",
+      "title": "კანჭის პატარა დაფა",
+      "badge": "",
+      "description": "კანჭი, გარნირი, მწნილი, წიწაკა, სალათი და სოუსები.",
+      "helper": "უფრო მშვიდი, მაგრამ მაინც სერიოზული არჩევანი.",
+      "price": 91,
+      "minPrepTimeMinutes": 45
+    }
+  ]
+}

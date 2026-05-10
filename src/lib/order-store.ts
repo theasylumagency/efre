@@ -10,8 +10,10 @@ import type {
   OrderLineItem,
   OrderStatus,
 } from "@/data/orders";
+import { getKanchiProduct } from "@/data/kanchi";
 import { getSelections, getTotalPrice, getPublicLunchItems, validatePickupTime } from "@/lib/lunch";
 import { buildLocalDateTimeFromTimeInput, toLocalDateTimeString } from "@/lib/local-date-time";
+import { readKanchiData } from "@/lib/kanchi-store";
 import { readLunchData } from "@/lib/lunch-store";
 
 type OrderRow = {
@@ -126,13 +128,13 @@ function normalizeOrderCode(value: string) {
   return value.trim().toUpperCase();
 }
 
-function createUniqueOrderCode(database: Database.Database) {
+function createUniqueOrderCode(database: Database.Database, prefix = "BL") {
   const statement = database.prepare(
     "SELECT 1 FROM orders WHERE public_code = ? LIMIT 1",
   );
 
   for (let attempt = 0; attempt < 8; attempt += 1) {
-    const candidate = `BL-${randomBytes(4).toString("hex").toUpperCase()}`;
+    const candidate = `${prefix}-${randomBytes(4).toString("hex").toUpperCase()}`;
 
     if (!statement.get(candidate)) {
       return candidate;
@@ -235,7 +237,194 @@ function readOrders(database: Database.Database, rows: OrderRow[]) {
   return rows.map((row) => mapOrder(row, itemsByOrderId.get(row.id) ?? []));
 }
 
+function getNormalizedCustomer(input: CreateLunchOrderInput) {
+  const customerName =
+    typeof input.customerName === "string" && input.customerName.trim()
+      ? input.customerName.trim()
+      : typeof input.name === "string"
+        ? input.name.trim()
+        : "";
+
+  const rawPhone =
+    typeof input.customerPhone === "string" && input.customerPhone.trim()
+      ? input.customerPhone
+      : typeof input.phone === "string"
+        ? input.phone
+        : "";
+
+  const rawCustomerPhone = rawPhone.replace(/\D/g, "");
+  const customerPhone =
+    rawCustomerPhone.length === 12 && rawCustomerPhone.startsWith("995")
+      ? rawCustomerPhone.slice(3)
+      : rawCustomerPhone;
+
+  return {
+    customerName,
+    customerPhone,
+  };
+}
+
+function getKanchiFulfillmentLabel(value: string) {
+  return value === "pickup" ? "წაღება" : "მიტანა";
+}
+
+function buildKanchiNote(input: CreateLunchOrderInput) {
+  const fulfillmentType =
+    input.fulfillmentType === "pickup" ? "pickup" : "delivery";
+  const addressOrDistrict =
+    typeof input.addressOrDistrict === "string"
+      ? input.addressOrDistrict.trim().slice(0, 220)
+      : "";
+  const comment =
+    typeof input.comment === "string"
+      ? input.comment.trim().slice(0, 420)
+      : typeof input.note === "string"
+        ? input.note.trim().slice(0, 420)
+        : "";
+
+  const lines = [
+    "შეკვეთის ტიპი: კანჭის დაფა",
+    `შესრულება: ${getKanchiFulfillmentLabel(fulfillmentType)}`,
+  ];
+
+  if (fulfillmentType === "delivery") {
+    lines.push(`მისამართი / უბანი: ${addressOrDistrict || "ზარით დასაზუსტებელია"}`);
+  }
+
+  if (comment) {
+    lines.push(`კომენტარი: ${comment}`);
+  }
+
+  lines.push("ზარის დროს დასაზუსტებელია დრო, მისამართი და დამატებები.");
+
+  return lines.join("\n");
+}
+
+async function createKanchiOrder(input: CreateLunchOrderInput) {
+  const lunchData = await readLunchData();
+
+  if (!lunchData.settings.orderingEnabled) {
+    throw new LunchOrderError(
+      "შეკვეთის მიღება ახლა გამორთულია. შეგიძლია დაგვირეკო.",
+      403,
+    );
+  }
+
+  const { customerName, customerPhone } = getNormalizedCustomer(input);
+
+  if (!customerName) {
+    throw new LunchOrderError("სახელი აუცილებელია.");
+  }
+
+  if (customerPhone.length !== 9) {
+    throw new LunchOrderError("ტელეფონის ნომერი უნდა შედგებოდეს 9 ციფრისგან.");
+  }
+
+  const productType = input.productType === "small" ? "small" : "large";
+  const kanchiData = await readKanchiData();
+  const product = getKanchiProduct(kanchiData, productType);
+
+  if (!product) {
+    throw new LunchOrderError("არჩეული დაფა ვერ მოიძებნა.");
+  }
+
+  const desiredTime =
+    typeof input.desiredTime === "string" && input.desiredTime.trim()
+      ? input.desiredTime.trim()
+      : typeof input.pickupTime === "string"
+        ? input.pickupTime.trim()
+        : "";
+
+  if (!desiredTime) {
+    throw new LunchOrderError("სასურველი დრო მიუთითე.");
+  }
+
+  const now = new Date();
+  const pickupDateTime = buildLocalDateTimeFromTimeInput(desiredTime, now);
+
+  if (!pickupDateTime) {
+    throw new LunchOrderError("სასურველი დრო სწორ ფორმატში მიუთითე.");
+  }
+
+  const note = buildKanchiNote(input);
+  const createdAt = toLocalDateTimeString(now);
+  const database = getDatabase();
+  const publicCode = createUniqueOrderCode(database, "KP");
+
+  database.transaction(() => {
+    const orderResult = database
+      .prepare(
+        `
+          INSERT INTO orders (
+            public_code,
+            customer_name,
+            customer_phone,
+            pickup_time,
+            note,
+            status,
+            total_price,
+            item_count,
+            requires_confirmation,
+            created_at,
+            updated_at
+          )
+          VALUES (?, ?, ?, ?, ?, 'new', ?, 1, 0, ?, ?)
+        `,
+      )
+      .run(
+        publicCode,
+        customerName,
+        customerPhone,
+        pickupDateTime,
+        note,
+        product.price,
+        createdAt,
+        createdAt,
+      );
+
+    database
+      .prepare(
+        `
+          INSERT INTO order_items (
+            order_id,
+            lunch_item_id,
+            item_number,
+            title,
+            composition,
+            quantity,
+            unit_price,
+            line_total,
+            prep_time_minutes
+          )
+          VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)
+        `,
+      )
+      .run(
+        Number(orderResult.lastInsertRowid),
+        product.orderItemId,
+        product.number,
+        product.title,
+        product.description,
+        product.price,
+        product.price,
+        product.minPrepTimeMinutes ?? lunchData.settings.defaultPrepTimeMinutes,
+      );
+  })();
+
+  const order = getLunchOrderByCode(publicCode);
+
+  if (!order) {
+    throw new LunchOrderError("შეკვეთის შენახვა ვერ დასრულდა.", 500);
+  }
+
+  return order;
+}
+
 export async function createLunchOrder(input: CreateLunchOrderInput) {
+  if (input.source === "kanchi-page") {
+    return createKanchiOrder(input);
+  }
+
   const lunchData = await readLunchData();
 
   if (!lunchData.settings.orderingEnabled) {
