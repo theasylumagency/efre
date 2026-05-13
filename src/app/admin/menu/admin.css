@@ -1,0 +1,237 @@
+:root {
+    --bg: #0b0d12;
+    --panel: #111521;
+    --panel2: #0f1320;
+    --text: #e9eef7;
+    --muted: #9aa6bd;
+    --border: rgba(255, 255, 255, .10);
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background: linear-gradient(90deg, rgb(37 41 42) 0%, rgb(17 20 54) 50%, rgb(35 25 47) 100%);
+    color: var(--text);
+}
+
+a {
+    color: #b7c7ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(17, 21, 33, .6);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+th,
+td {
+    padding: 12px;
+    border-top: 1px solid var(--border);
+}
+
+thead th {
+    color: var(--muted);
+    font-weight: 600;
+    border-top: none;
+    background: rgba(255, 255, 255, .03);
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: rgba(183, 199, 255, .55);
+}
+
+button {
+    background: rgba(183, 199, 255, .12);
+    border: 1px solid rgba(183, 199, 255, .25);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: rgba(183, 199, 255, .18);
+}
+
+button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+fieldset {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .03);
+}
+
+legend {
+    color: var(--muted);
+    padding: 0 8px;
+}
+
+select {
+    color: var(--text);
+}
+
+option {
+    color: #111;
+}
+
+.panel {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: rgba(0, 20, 136, 0.03);
+}
+
+.btn,
+.btnAdd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .05);
+    color: var(--text);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btnAdd {
+    background-color: #0046ff;
+}
+
+.btnAdd:hover {
+    background: #537cec;
+}
+
+.btn:hover {
+    background: rgba(255, 255, 255, .08);
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .04);
+    color: var(--text);
+    cursor: pointer;
+
+
+
+    background: #0b0e15;
+    border: 1px solid #0b0e15;
+    border-radius: 5px;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+
+    overflow: hidden;
+    font-weight: 100;
+    font-size: smaller;
+
+}
+
+.pill[data-active="true"] {
+    border-color: rgba(183, 199, 255, .55);
+    background: rgba(183, 199, 255, .12);
+}
+
+.row {
+    border-radius: 12px;
+    background: #0f1620;
+}
+
+.row[data-over="true"] {
+    outline: 2px solid rgba(183, 199, 255, .35);
+}
+
+/* Dropdown readability */
+select {
+    color: var(--text);
+}
+
+option {
+    color: #111;
+}
+
+/* Nav link */
+.navLink {
+    color: #b7c7ff;
+    text-decoration: none;
+}
+
+.navLink:hover {
+    text-decoration: underline;
+}
+
+/* Buttons */
+.btnPrimary {
+    border-color: rgba(183, 199, 255, .55) !important;
+    background: rgba(183, 199, 255, .18) !important;
+}
+
+/* Modal */
+.modalBackdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .55);
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    z-index: 100;
+}
+
+.modalPanel {
+    width: min(520px, 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: rgba(17, 21, 33, .92);
+    backdrop-filter: blur(10px);
+    padding: 16px;
+    display: grid;
+    gap: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+}
+
+.modalActions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+
+/* helps on some browsers with weird gray options */

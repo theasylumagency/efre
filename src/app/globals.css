@@ -2499,3 +2499,249 @@ code {
     min-height: calc(297mm - 20mm);
   }
 }
+
+/* ====== Menu Page ====== */
+
+.efre-menu-page__locale {
+  border: 1px solid rgba(31, 29, 26, 0.36);
+  color: var(--efre-charcoal);
+  font-size: 0.82rem;
+  font-weight: 720;
+  line-height: 1;
+  padding: 0.45rem 0.65rem;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.efre-menu-page__locale:hover {
+  border-color: var(--efre-wine);
+  color: var(--efre-wine);
+}
+
+.efre-menu-page__intro {
+  padding: 7rem max(1.5rem, calc((100vw - 68rem) / 2)) 2rem;
+}
+
+.efre-menu-page__intro h1 {
+  font-size: 2.5rem;
+  font-weight: 720;
+  line-height: 1.1;
+  margin: 0.7rem 0 0;
+  max-width: 16ch;
+  overflow-wrap: anywhere;
+}
+
+.efre-menu-page__intro p:not(.efre-kicker) {
+  color: rgba(31, 29, 26, 0.76);
+  font-size: 1rem;
+  font-weight: 430;
+  line-height: 1.85;
+  margin: 0.85rem 0 0;
+  max-width: 42rem;
+}
+
+.efre-menu-page__cats {
+  background: rgba(234, 225, 211, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(31, 29, 26, 0.18);
+  overflow-x: auto;
+  padding: 0.75rem max(1.5rem, calc((100vw - 68rem) / 2));
+  position: sticky;
+  scrollbar-width: none;
+  top: 4.25rem;
+  z-index: 20;
+}
+
+.efre-menu-page__cats::-webkit-scrollbar {
+  display: none;
+}
+
+.efre-menu-page__cats-inner {
+  display: flex;
+  gap: 0.55rem;
+}
+
+.efre-menu-page__cat-btn {
+  background: transparent;
+  border: 1px solid rgba(31, 29, 26, 0.38);
+  color: var(--efre-charcoal);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 680;
+  line-height: 1.2;
+  padding: 0.45rem 1rem;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  white-space: nowrap;
+}
+
+.efre-menu-page__cat-btn:hover {
+  border-color: var(--efre-wine);
+  box-shadow: 3px 3px 0 rgba(31, 29, 26, 0.16);
+  transform: translate(-1px, -1px);
+}
+
+.efre-menu-page__cat-btn--active {
+  background: var(--efre-charcoal);
+  border-color: var(--efre-charcoal);
+  box-shadow: 4px 4px 0 rgba(31, 29, 26, 0.22);
+  color: var(--efre-paper);
+}
+
+.efre-menu-page__cat-btn--active:hover {
+  background: #2b2824;
+  transform: translate(-1px, -1px);
+}
+
+.efre-menu-page__dishes {
+  display: grid;
+  gap: 1rem;
+  padding: 2rem max(1.5rem, calc((100vw - 68rem) / 2)) 5rem;
+}
+
+.efre-menu-page__empty {
+  color: rgba(31, 29, 26, 0.62);
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.efre-dish-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 42%),
+    var(--efre-paper-dark);
+  border: 1px solid var(--efre-charcoal);
+  box-shadow: 5px 5px 0 rgba(31, 29, 26, 0.11);
+  display: grid;
+  overflow: hidden;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.efre-dish-card:hover {
+  border-color: var(--efre-wine);
+  box-shadow: 7px 7px 0 rgba(107, 46, 46, 0.18);
+  transform: translate(-1px, -1px);
+}
+
+.efre-dish-card__photo {
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  position: relative;
+}
+
+.efre-dish-card__photo img {
+  filter: saturate(0.9) contrast(1.04);
+  object-fit: cover;
+  transition: transform 500ms ease;
+}
+
+.efre-dish-card:hover .efre-dish-card__photo img {
+  transform: scale(1.04);
+}
+
+.efre-dish-card__photo-placeholder {
+  background:
+    linear-gradient(90deg, rgba(178, 138, 71, 0.9) 0 0.35rem, transparent 0.35rem),
+    linear-gradient(135deg, rgba(68, 81, 72, 0.34), transparent 42%),
+    var(--efre-charcoal);
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.efre-dish-card__body {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1rem;
+}
+
+.efre-dish-card__top {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.efre-dish-card__title {
+  font-size: 1.15rem;
+  font-weight: 720;
+  line-height: 1.22;
+  margin: 0;
+}
+
+.efre-dish-card__price {
+  background: rgba(234, 225, 211, 0.66);
+  border: 1px solid rgba(107, 46, 46, 0.32);
+  color: var(--efre-wine);
+  flex-shrink: 0;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.32rem 0.6rem;
+  white-space: nowrap;
+}
+
+.efre-dish-card__desc {
+  color: rgba(31, 29, 26, 0.74);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.efre-dish-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.efre-dish-badge {
+  border: 1px solid rgba(107, 46, 46, 0.32);
+  color: var(--efre-wine);
+  display: inline-flex;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.35rem 0.52rem;
+}
+
+.efre-dish-badge--veg {
+  border-color: rgba(68, 81, 72, 0.4);
+  color: var(--efre-green);
+}
+
+.efre-dish-badge--top {
+  border-color: rgba(178, 138, 71, 0.42);
+  color: var(--efre-mustard);
+}
+
+@media (min-width: 640px) {
+  .efre-menu-page__intro h1 {
+    font-size: 3rem;
+  }
+
+  .efre-menu-page__dishes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .efre-menu-page__intro {
+    padding-top: 8.5rem;
+  }
+
+  .efre-menu-page__intro h1 {
+    font-size: 3.55rem;
+  }
+
+  .efre-menu-page__cats {
+    top: 5.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .efre-menu-page__dishes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

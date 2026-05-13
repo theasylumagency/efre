@@ -1,0 +1,16 @@
+
+> efre@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.100.4:3000
+- Environments: .env.local
+✓ Ready in 5.4s
+
+○ Compiling /lunch ...
+ GET /lunch 200 in 27.5s (next.js: 22.5s, application-code: 5.0s)
+✓ Finished filesystem cache database compaction in 19.1s
+ GET /lunch 200 in 1259ms (next.js: 81ms, application-code: 1177ms)
+ GET /kanchi 200 in 1235ms (next.js: 451ms, application-code: 784ms)
+ GET /kanchi 200 in 935ms (next.js: 89ms, application-code: 846ms)

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-05-13T10:42:43.110525Z",
+  "items": [
+    {
+      "id": "cat_0001",
+      "order": 10,
+      "status": "active",
+      "title": {
+        "ka": "ცივი კერძები",
+        "en": "Cold Dishes",
+        "ru": "Холодные закуски"
+      }
+    },
+    {
+      "id": "cat_0002",
+      "order": 20,
+      "status": "active",
+      "title": {
+        "ka": "ცომეული",
+        "en": "Breads & Pastries",
+        "ru": "Выпечка и блюда из теста"
+      }
+    },
+    {
+      "id": "cat_0003",
+      "order": 30,
+      "status": "active",
+      "title": {
+        "ka": "ხინკალი",
+        "en": "Khinkali",
+        "ru": "Хинкали"
+      }
+    },
+    {
+      "id": "cat_0004",
+      "order": 40,
+      "status": "active",
+      "title": {
+        "ka": "წვნიანი",
+        "en": "Soups",
+        "ru": "Супы"
+      }
+    },
+    {
+      "id": "cat_0005",
+      "order": 50,
+      "status": "active",
+      "title": {
+        "ka": "სოუსები",
+        "en": "Sauces",
+        "ru": "Соусы"
+      }
+    },
+    {
+      "id": "cat_0006",
+      "order": 60,
+      "status": "active",
+      "title": {
+        "ka": "ცხელი კერძები",
+        "en": "Hot Dishes",
+        "ru": "Горячие блюда"
+      }
+    },
+    {
+      "id": "cat_0007",
+      "order": 70,
+      "status": "active",
+      "title": {
+        "ka": "მწვადი",
+        "en": "Grill",
+        "ru": "Гриль"
+      }
+    },
+    {
+      "id": "cat_0008",
+      "order": 80,
+      "status": "active",
+      "title": {
+        "ka": "უალკოჰოლო სასმელები",
+        "en": "Non-Alcoholic Beverages",
+        "ru": "Безалкогольные напитки"
+      }
+    },
+    {
+      "id": "cat_0009",
+      "order": 90,
+      "status": "active",
+      "title": {
+        "ka": "ყავა",
+        "en": "Coffee",
+        "ru": "Кофе"
+      }
+    },
+    {
+      "id": "cat_0010",
+      "order": 100,
+      "status": "active",
+      "title": {
+        "ka": "დესერტი",
+        "en": "Desserts",
+        "ru": "Десерты"
+      }
+    }
+  ]
+}

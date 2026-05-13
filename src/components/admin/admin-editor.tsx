@@ -229,6 +229,12 @@ export function AdminEditor({
               >
                 Public page
               </Link>
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                href="/admin/menu/categories"
+              >
+                Menu Admin
+              </Link>
               {isProtected ? (
                 <button
                   className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-border bg-card-strong px-4 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:border-accent/25 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
